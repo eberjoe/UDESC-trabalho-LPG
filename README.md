@@ -47,4 +47,4 @@ A simulação de financiamento requererá os seguintes dados do contraente:
 * Valor total do bem a ser adquirido - **float**
 * Valor disponível para entrada - **float**
 
-O sistema deverá retornar as opções disponíveis de acordo com sua base de dados de instituições financeiras, ou uma mensagem indicando que não há opções para os valores fornecidos.
+O sistema deverá retornar as opções disponíveis de acordo com sua base de dados, ou uma mensagem indicando que não há opções para os valores fornecidos.
