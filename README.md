@@ -25,17 +25,21 @@ Cronograma:
 O sistema permitirá o cadastro, a consulta e a remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá ao usuário efetuar simulações de financiamento, apresentando na tela a progressão da amortização.
 ### Cadastro
 O cadastro de uma instituição financeira requererá a seguinte estrutura de dados:
-* ID - **int**
-* Nome da instituição - **char** *
-* Condições para amortização - **struct**
-  * Sistema SAC ou PRICE - **bool**
-  * Disponível (sim/não) - **bool**
-  * Porcentagem máxima de financiamento - **float**
-  * Taxa de juros - **float**
-  * Prazo máximo em meses - **int**
-  * Porcentagem máxima de comprometimento da renda - **float**
-  * Correção (pós-fixada/pré-fixada) - **bool**
-  * Indexador - **char** *
+* Instituição financeira - **struct**
+ * ID - **int**
+ * Nome da instituição - **char** *
+* Produto de financiamento - **struct**
+ * ID - **int**
+ * ID da instituição (FK) - **int**
+ * Nome do produto - **char** *
+ * Sistema de amortização (SAC ou PRICE) - **bool**
+ * Disponível (sim/não) - **bool**
+ * Porcentagem máxima de financiamento - **float**
+ * Taxa de juros - **float**
+ * Prazo máximo em meses - **int**
+ * Porcentagem máxima de comprometimento da renda - **float**
+ * Correção (pós-fixada/pré-fixada) - **bool**
+ * Indexador - **char** *
 
 ### Simulação
 A simulação de financiamento requererá os seguintes dados do contraente:
