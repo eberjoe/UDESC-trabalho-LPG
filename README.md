@@ -20,3 +20,28 @@ Cronograma:
 |Texto descritivo|1,0|
 |Apresentação e organização|1,0|
 |Presença (durante o mês de junho e principalmente na apresentação final)|1,0|
+
+## Sugestão
+### Sistema de cadastro de instituições financeiras e simulação de financiamento.
+O sistema permitirá cadastro, consulta e remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá ao usuário efetuar simulações de financiamento, apresentando na tela a progressão da amortização.
+### Cadastro
+O cadastro de uma instituição financeira requerirá a seguinte estrutura de dados:
+* ID (?) - **int**
+* Nome da instituição - **char** *
+* Condições para amortização - **struct**
+  * Sistema SAC ou PRICE - **bool**
+  * Disponível (sim/não) - **bool**
+  * Porcentagem máxima de financiamento - **float**
+  * Taxa de juros - **float**
+  * Prazo máximo em meses - **int**
+  * Porcentagem máxima de comprometimento da renda - **float**
+  * Correção (pós-fixada/pré-fixada) - **bool**
+  * Indexador **char** *
+
+### Simulação
+A simulação de financiamento requerirá os seguintes dados do contraente:
+* Renda - **float**
+* Valor total do bem a ser adquirido - **float**
+* Valor disponível para entrada - **float**
+
+O sistema deverá retornar as opções disponíveis de acordo com sua base de dados de instituições financeiras, ou uma mensagem indicando que não há opções para os valores fornecidos.
