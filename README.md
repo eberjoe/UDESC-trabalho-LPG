@@ -1,5 +1,5 @@
 # Requisitos
-Faça seu próprio sistemas de controle de dados que resolva algum problema real, empresarial ou pessoal.
+Faça seu próprio sistema de controle de dados que resolva algum problema real, empresarial ou pessoal.
 
 Cronograma:
 
