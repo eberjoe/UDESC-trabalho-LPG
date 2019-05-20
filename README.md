@@ -28,7 +28,7 @@ O cadastro de uma instituição financeira requererá as seguintes estruturas de
 * Instituição financeira - **struct**
   * ID - **int**
   * Nome da instituição - **char** *
-* Produto - **struct** (pelo menos um por instituição)
+* Produto (pelo menos um por instituição) - **struct** 
   * ID - **int**
   * ID da instituição (FK) - **int**
   * Nome do produto - **char** *
