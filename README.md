@@ -53,4 +53,4 @@ A simulação de financiamento requererá os seguintes dados do contraente:
 O sistema deverá retornar as opções disponíveis de acordo com a base de dados, ou uma mensagem indicando que não há opções para os valores fornecidos. 
 
 ### Expectativa
-O sistema não se limitará à simples curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil.
+O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil.
