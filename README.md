@@ -38,7 +38,7 @@ O cadastro de uma instituição financeira requererá as seguintes estruturas de
   * Disponível (sim/não) - **bool**
   * Sistema de amortização (SAC ou PRICE) - **bool**
   * Porcentagem máxima de financiamento - **float**
-  * Taxa de juros - **float**
+  * Taxa efetiva de juros - **float**
   * Prazo máximo em meses - **int**
   * Porcentagem máxima de comprometimento da renda - **float**
   * Correção (pós-fixada/pré-fixada) - **bool**
