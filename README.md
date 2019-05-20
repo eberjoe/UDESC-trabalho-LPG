@@ -3,17 +3,17 @@ Faça seu próprio sistema de controle de dados que resolva algum problema real,
 
 Cronograma:
 
-* Definição da Equipe (duplas): até dia 20/05 (confirme a equipe até este dia usando o e-mail rafaelberri@gmail.com e no assunto informe “LPG – TF Equipe”)
-* Definição do problema a ser tratado: até dia 27/05. Envie um texto descrevendo o problema que o sistema final poderia ajudar. Envie a definição principal dos dados (structs) que será utilizado na solução escolhida. No mínimo, o programa deverá trabalhar com 10 campos. (Envie até este dia usando o e-mail rafaelberri@gmail.com e o assunto “LPG – TF Dados”)
-* Apresentação do sistema será dia 17 ou 24/06. Todos os integrantes deverão falar. Deverá ser apresentado o sistema/problema. Duração máxima de cada apresentação serão 12 minutos e 3 minutos para perguntas. A equipe deverá se atentar em mostrar, principalmente, os pontos de avaliação abaixo.
-* Envio do código fonte (24/06). Enviar para rafaelberri@gmail.com um arquivo compactado contendo o código fonte do programa, a apresentação final, e um texto descritivo do sistema/problema atendido (com no máximo 2 páginas de texto).
+* [ ] Definição da Equipe (duplas): até dia 20/05 (confirme a equipe até este dia usando o e-mail rafaelberri@gmail.com e no assunto informe “LPG – TF Equipe”)
+* [ ] Definição do problema a ser tratado: até dia 27/05. Envie um texto descrevendo o problema que o sistema final poderia ajudar. Envie a definição principal dos dados (structs) que será utilizado na solução escolhida. No mínimo, o programa deverá trabalhar com 10 campos. (Envie até este dia usando o e-mail rafaelberri@gmail.com e o assunto “LPG – TF Dados”)
+* [ ] Apresentação do sistema será dia 17 ou 24/06. Todos os integrantes deverão falar. Deverá ser apresentado o sistema/problema. Duração máxima de cada apresentação serão 12 minutos e 3 minutos para perguntas. A equipe deverá se atentar em mostrar, principalmente, os pontos de avaliação abaixo.
+* [ ] Envio do código fonte (24/06). Enviar para rafaelberri@gmail.com um arquivo compactado contendo o código fonte do programa, a apresentação final, e um texto descritivo do sistema/problema atendido (com no máximo 2 páginas de texto).
 
 ## Critérios de Pontuação
 |Descrição|Peso|
 |-|-|
 |Definição da estrutura de dados|1,0|
-|Operação de cadastro/inserção de dados (validação da entrada de dados|1,0|
-|Operação de consulta de dados (possibilitar a consulta utilizando, pelo menos, dois campos|1,0|
+|Operação de cadastro/inserção de dados (validação da entrada de dados)|1,0|
+|Operação de consulta de dados (possibilitar a consulta utilizando, pelo menos, dois campos)|1,0|
 |Operação de exclusão de dados (deixe claro a estratégia adotada)|1,0|
 |Inovação (utilização de técnicas, bibliotecas e soluções não trabalhadas na disciplina)|2,0|
 |Telas do programa (boa aparência e praticidade)|1,0|
