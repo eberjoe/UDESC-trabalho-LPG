@@ -26,20 +26,20 @@ O sistema permitirá o cadastro, a consulta e a remoção de dados de instituiç
 ### Cadastro
 O cadastro de uma instituição financeira requererá a seguinte estrutura de dados:
 * Instituição financeira - **struct**
- * ID - **int**
- * Nome da instituição - **char** *
+  * ID - **int**
+  * Nome da instituição - **char** *
 * Produto de financiamento - **struct**
- * ID - **int**
- * ID da instituição (FK) - **int**
- * Nome do produto - **char** *
- * Sistema de amortização (SAC ou PRICE) - **bool**
- * Disponível (sim/não) - **bool**
- * Porcentagem máxima de financiamento - **float**
- * Taxa de juros - **float**
- * Prazo máximo em meses - **int**
- * Porcentagem máxima de comprometimento da renda - **float**
- * Correção (pós-fixada/pré-fixada) - **bool**
- * Indexador - **char** *
+  * ID - **int**
+  * ID da instituição (FK) - **int**
+  * Nome do produto - **char** *
+  * Sistema de amortização (SAC ou PRICE) - **bool**
+  * Disponível (sim/não) - **bool**
+  * Porcentagem máxima de financiamento - **float**
+  * Taxa de juros - **float**
+  * Prazo máximo em meses - **int**
+  * Porcentagem máxima de comprometimento da renda - **float**
+  * Correção (pós-fixada/pré-fixada) - **bool**
+  * Indexador - **char** *
 
 ### Simulação
 A simulação de financiamento requererá os seguintes dados do contraente:
