@@ -55,7 +55,7 @@ O sistema deverá retornar as opções disponíveis de acordo com a base de dado
 ## Expectativa
 O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil.
 
-## Convenção para nomes
+## Convenção para Nomeação
 Os nomes das entidades serão dados em inglês, seguindo o seguinte padrão:
 
 |Tipo|Convenção|Exemplo|
