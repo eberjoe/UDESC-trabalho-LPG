@@ -54,3 +54,12 @@ O sistema deverá retornar as opções disponíveis de acordo com a base de dado
 
 ## Expectativa
 O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil.
+
+## Convenção para nomes
+Os nomes das entidades serão dados em inglês, seguindo as seguintes convenções:
+
+|Tipo|Convenção|Exemplo|
+|-|-|-|
+|Structs e funções|Pascal case|ByPassModel|
+|Constantes|Upper case|MAX|
+|Campos e variáveis|Camel case|idProduct|
