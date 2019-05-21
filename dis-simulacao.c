@@ -30,6 +30,7 @@ int main() {
         scanf("%d", &op);
         switch(op) {
             case 1:
+                while (getchar() != '\n');
                 printf("\nSIMULAÇÃO\n");
                 while(1) {
                     printf("Entre o valor da renda bruta do contraente: ");

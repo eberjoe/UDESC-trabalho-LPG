@@ -4,7 +4,6 @@
 
 int ValidaFloat(float *x) {
     char buffer[100], *endptr;
-    fflush(stdin);
     fgets(buffer, sizeof(buffer), stdin);
     *x = strtof(buffer, &endptr);
     if ((*endptr == '\0') || (isspace(*endptr) != 0)) {
