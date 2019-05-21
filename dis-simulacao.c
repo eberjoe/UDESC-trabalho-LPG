@@ -1,4 +1,5 @@
-#include<stdio.h>
+#include <stdio.h>
+
 #define MAXNOME 100
 
 struct Banco {
@@ -19,5 +20,35 @@ struct Produto {
 };
 
 int main() {
+    int op, s=0, ch;
+    while(1) {
+        printf("MENU PRINCIPAL\n");
+        printf("[1] SIMULAÇÃO\n[2] CADASTRO DE INSTITUIÇÃO FINANCEIRA\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
+        printf("Entre uma das opções acima: ");
+        scanf("%d", &op);
+        switch(op) {
+            case 1:
+                printf("\nSIMULAÇÃO\n");
+                break;
+            case 2:
+                printf("\nCADASTRO DE BANCO\n");
+                break;
+            case 3:
+                printf("\nCADASTRO DE PRODUTO\n");
+                break;
+            case 4:
+                printf("\nOBRIGADO!\n");
+                s=1;
+                break;
+            default:
+                printf("\nOPÇÃO INVÁLIDA!\n\n");
+                /* Limpa o buffer do \n que vem com scanf() */
+                while ((ch=getchar()) != '\n' && ch != EOF) ;
+                printf("\n\nPressione ENTER para continuar.");
+                while ((ch=getchar()) != '\n' && ch != EOF)
+                break;
+        }
+        if (s) break; else printf("\nOPÇÃO EM DESENVOLVIMENTO...\n\n");
+    }
     return 0;
 }
