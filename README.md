@@ -60,4 +60,4 @@ Os nomes das entidades seguirão o seguinte padrão:
 |-|-|-|
 |Constantes|Upper case|MAX|
 |Campos e variáveis|Camel case|idProduct|
-|Structs e funções, exceto **main**|Pascal case|ByPassModel|
+|Structs e funções -- exceto **main()**|Pascal case|ByPassModel|
