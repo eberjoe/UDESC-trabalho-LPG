@@ -36,13 +36,11 @@ O cadastro de uma instituição financeira requererá as seguintes estruturas de
   * ID da instituição - **int**
   * Nome do produto - **char**
   * Disponível (sim/não) - **int**
-  * Sistema de amortização (SAC ou PRICE) - **int**
+  * Sistema de amortização (SAC ou PRICE) - **char**
   * Porcentagem máxima de financiamento - **float**
   * Taxa efetiva de juros - **float**
   * Prazo máximo em meses - **int**
   * Porcentagem máxima de comprometimento da renda - **float**
-  * Correção (pós-fixada/pré-fixada) - **int**
-  * Indexador - **char**
 
 ## Dados para a Simulação
 A simulação de financiamento requererá os seguintes dados do contraente:
@@ -56,10 +54,10 @@ O sistema deverá retornar as opções disponíveis de acordo com a base de dado
 O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil.
 
 ## Convenção para Nomes
-Os nomes das entidades serão dados em inglês, seguindo o seguinte padrão:
+Os nomes das entidades seguirão o seguinte padrão:
 
 |Tipo|Convenção|Exemplo|
 |-|-|-|
-|Structs e funções, exceto **main**|Pascal case|ByPassModel|
 |Constantes|Upper case|MAX|
 |Campos e variáveis|Camel case|idProduct|
+|Structs e funções, exceto **main**|Pascal case|ByPassModel|
