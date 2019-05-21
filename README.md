@@ -58,6 +58,6 @@ Os nomes das entidades seguirão o seguinte padrão:
 
 |Tipo|Convenção|Exemplo|
 |-|-|-|
-|Constantes|Upper case|MAX|
-|Campos e variáveis|Camel case|idProduct|
-|Structs e funções -- exceto **main()**|Pascal case|ByPassModel|
+|constantes|upper case|MAX|
+|campos e variáveis|camel case|idProduto|
+|structs e funções -- exceto **main()**|pascal case|ByPassModel|
