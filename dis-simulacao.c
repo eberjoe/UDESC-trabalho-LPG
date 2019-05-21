@@ -1,14 +1,15 @@
 #include<stdio.h>
+#define MAXNOME 100
 
 struct Banco {
     int idBanco;
-    char nome[100];
+    char nome[MAXNOME];
 };
 
 struct Produto {
     int idProduto;
     int idBanco;
-    char nomeProduto[100];
+    char nomeProduto[MAXNOME];
     int disponivel;
     char sistAmortizacao;
     float maxPorcentFinanc;
