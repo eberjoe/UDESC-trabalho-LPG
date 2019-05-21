@@ -60,6 +60,6 @@ Os nomes das entidades serão dados em inglês, seguindo o seguinte padrão:
 
 |Tipo|Convenção|Exemplo|
 |-|-|-|
-|Structs e funções|Pascal case|ByPassModel|
+|Structs e funções, exceto **main**|Pascal case|ByPassModel|
 |Constantes|Upper case|MAX|
 |Campos e variáveis|Camel case|idProduct|
