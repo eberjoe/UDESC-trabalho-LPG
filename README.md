@@ -61,4 +61,4 @@ Os nomes das entidades seguirão o seguinte padrão:
 |constantes|upper case|MAX|
 |campos e variáveis|camel case|idProduto|
 |structs e funções -- exceto **main()**|pascal case|ByPassModel|
-|bibliotecas|lower case|mathfunctions|
+|bibliotecas e arquivos de apoio -- exceto **README.md**|lower case|mathfunctions|
