@@ -27,20 +27,28 @@ Cronograma:
 O sistema permitirá o cadastro, a consulta e a remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá ao usuário efetuar simulações de financiamento, apresentando na tela a progressão da amortização.
 
 ## Dados para Cadastro
-O cadastro de uma instituição financeira requererá as seguintes estruturas de dados:
-* Instituição financeira - **struct**
-  * ID - **int**
-  * Nome da instituição - **char**
-* Produto (pelo menos um por instituição) - **struct** 
-  * ID - **int**
-  * ID da instituição - **int**
-  * Nome do produto - **char**
-  * Disponível (sim/não) - **int**
-  * Sistema de amortização (SAC ou PRICE) - **char**
-  * Porcentagem máxima de financiamento - **float**
-  * Taxa efetiva de juros - **float**
-  * Prazo máximo em meses - **int**
-  * Porcentagem máxima de comprometimento da renda - **float**
+O cadastro de instituições financeiras requererá as seguintes estruturas de dados:
+``` C
+#define MAXNOME 100
+
+struct Banco {
+    int idBanco; // identificador da instituição financeira
+    int disponivel; // flag indicando se a instituição financeira está disponível
+    char nome[MAXNOME]; // nome da instituição financeira
+};
+
+struct Produto {
+    int idProduto; // identificador do produto
+    int disponivel; // flag indicando se o produto está disponível ou não
+    int idBanco; // identificador da instituição financeira à qual o produto pertence (chave externa)
+    char nome[MAXNOME]; // nome do produto
+    char sistAmortizacao; // caracter indicando o sistema de amortização que pode ser SAC ('S') ou PRICE ('P')
+    float maxPorcentFinanc; // número entre 0 e 1 indicando a máxima porção financiável de um valor
+    float taxaEfetivaJuros; // número entre 0 e 1 indicando a taxa efetiva de juros
+    int prazoMax; // número inteiro indicando a máxima quantidade de meses permitida para o financiamento
+    float maxPorcentRenda; // número entre 0 e 1 indicando o máximo comprometimento da renda permitido
+};
+```
 
 ## Dados para a Simulação
 A simulação de financiamento requererá os seguintes dados do contraente:
@@ -60,5 +68,10 @@ Os nomes das entidades seguirão o seguinte padrão:
 |-|-|-|
 |constantes|upper case|MAX|
 |campos e variáveis|camel case|idProduto|
-|structs e funções -- exceto **main()**|pascal case|ByPassModel|
-|bibliotecas e arquivos de apoio -- exceto **README.md**|lower case|mathfunctions|
+|structs e funções -- exceto **```main()```**|pascal case|ByPassModel|
+|bibliotecas e arquivos de apoio -- exceto **```README.md```**|lower case|mathfunctions|
+
+## Remoção de Dados
+A remoção de registros de instituições e de produtos se dará através do zeramento do campo **```disponivel```**. Ao efetuar a inserção de um novo registro, o sistema deverá primeiro procurar por um registro com o campo **```disponivel```** zerado para efetuar a reescrita do mesmo, e somente adicionar novos registros ao fim do arquivo nos casos em que não houver registros com o campo **```disponivel```** zerado. Isto limitará a geração de lixo e o desperdício de recursos.
+
+Os registros com o campo **```disponivel```** zerado não serão visíveis ao usuário seja para consulta ou para edição.
