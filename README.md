@@ -56,8 +56,9 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 ## Convenção para Nomes
 Os nomes das entidades seguirão o seguinte padrão:
 
-|Tipo|Convenção|Exemplo|
+|Tipo|Formato|Exemplo|
 |-|-|-|
 |constantes|upper case|MAX|
 |campos e variáveis|camel case|idProduto|
 |structs e funções -- exceto **main()**|pascal case|ByPassModel|
+|bibliotecas e arquivos de apoio -- exceto **README.md**|lower case|mathfunctions|
