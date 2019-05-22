@@ -73,13 +73,13 @@ int main() {
                     case 2:
                         printf("\nCADASTRO DE BANCO > INSERÇÃO\n");
                         printf("Entre o nome do novo banco: ");
-                        b=fopen("b.dat", "w");
+                        b=fopen("b.bin", "w");
                         if (b == NULL) {
                             fprintf(stderr, "\nError opend file\n");
                             exit(1);
                         }
-                        struct Banco input={1, gets(n)};
-                        fwrite(&input, sizeof(struct Banco), 1, b);
+                        struct Banco novoBanco={1, gets(n)};
+                        fwrite(&novoBanco, sizeof(struct Banco), 1, b);
                         if (fwrite != 0)
                             printf("Banco inserido com sucesso!\n");
                         else
