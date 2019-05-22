@@ -6,14 +6,15 @@
 
 struct Banco {
     int idBanco; // identificador da instituição financeira
+    int disponivel; // flag indicando se a instituição financeira está disponível
     char nome[MAXNOME]; // nome da instituição financeira
 };
 
 struct Produto {
     int idProduto; // identificador do produto
-    int idBanco; // identificador da instituição financeira à qual o produto pertence (chave externa)
-    char nomeProduto[MAXNOME]; // nome do produto
     int disponivel; // flag indicando se o produto está disponível ou não
+    int idBanco; // identificador da instituição financeira à qual o produto pertence (chave externa)
+    char nome[MAXNOME]; // nome do produto
     char sistAmortizacao; // caracter indicando o sistema de amortização que pode ser SAC ('S') ou PRICE ('P')
     float maxPorcentFinanc; // número entre 0 e 1 indicando a máxima porção financiável de um valor
     float taxaEfetivaJuros; // número entre 0 e 1 indicando a taxa efetiva de juros
@@ -23,9 +24,10 @@ struct Produto {
 
 int main() {
     FILE *b, *p;
-    int op, s=0;
+    int op, id, s=0;
     float renda, valorBem, entrada;
-    char n[MAXNOME];
+    struct Banco entradaBanco;
+    struct Produto entradaProduto;
     while(1) {
         printf("MENU PRINCIPAL\n");
         printf("[1] SIMULAÇÃO\n[2] CADASTRO DE BANCO\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
@@ -69,17 +71,25 @@ int main() {
                 switch(op) {
                     case 1:
                         printf("\nCADASTRO DE BANCO > CONSULTA\n");
+                        b=fopen("b.dat", "r");
+                        if (b == NULL) {
+                            fprintf(stderr, "\nErro tentando abrir o arquivo!\n");
+                            exit(1);
+                        }
+                        while(fread(&entradaBanco, sizeof(struct Banco), 1, b))
+                            printf ("ID: %d\nNome: %s\n\n", entradaBanco.idBanco, entradaBanco.nome);
+                        fclose (b);
                         break;
                     case 2:
                         printf("\nCADASTRO DE BANCO > INSERÇÃO\n");
                         printf("Entre o nome do novo banco: ");
-                        b=fopen("b.bin", "w");
+                        b=fopen("b.dat", "w");
                         if (b == NULL) {
-                            fprintf(stderr, "\nError opend file\n");
+                            fprintf(stderr, "\nErro tentando abrir o arquivo!\n");
                             exit(1);
                         }
-                        struct Banco novoBanco={1, gets(n)};
-                        fwrite(&novoBanco, sizeof(struct Banco), 1, b);
+                        struct Banco entradaBanco={1, 1, gets(entradaBanco.nome)};
+                        fwrite(&entradaBanco, sizeof(struct Banco), 1, b);
                         if (fwrite != 0)
                             printf("Banco inserido com sucesso!\n");
                         else
@@ -89,6 +99,8 @@ int main() {
                     case 3:
                         printf("\nCADASTRO DE BANCO > REMOÇÃO\n");
                         break;
+                    default:
+                        printf("\nOPÇÃO INVÁLIDA!\n\n");
                 }
                 break;
             case 3:
@@ -101,7 +113,6 @@ int main() {
             /* VALIDAÇÃO DO MENU PRINCIPAL */
             default:
                 printf("\nOPÇÃO INVÁLIDA!\n\n");
-                while (getchar() != '\n');
         }
         if (s) break;
     }
