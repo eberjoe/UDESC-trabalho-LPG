@@ -25,17 +25,17 @@ int main() {
     float renda, valorBem, entrada;
     while(1) {
         printf("MENU PRINCIPAL\n");
-        printf("[1] SIMULAÇÃO\n[2] CADASTRO DE INSTITUIÇÃO FINANCEIRA\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
+        printf("[1] SIMULAÇÃO\n[2] CADASTRO DE BANCO\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
         printf("Entre uma das opções acima: ");
         scanf("%d", &op);
+        while (getchar() != '\n');
         switch(op) {
             case 1:
-                while (getchar() != '\n');
                 printf("\nSIMULAÇÃO\n");
                 while(1) {
                     printf("Entre o valor da renda bruta mensal do contraente: ");
                     if (ValidaFloat(&renda)) {
-                        printf("%f\n", renda);
+                        printf("%.2f\n", renda);
                         break;
                     }
                     printf("\nEntrada inválida!\n\n");
@@ -43,7 +43,7 @@ int main() {
                 while(1) {
                     printf("Entre o valor do bem a ser adquirido: ");
                     if (ValidaFloat(&valorBem)) {
-                        printf("%f\n", valorBem);
+                        printf("%.2f\n", valorBem);
                         break;
                     }
                     printf("\nEntrada inválida!\n\n");
@@ -51,7 +51,7 @@ int main() {
                 while(1) {
                     printf("Entre o valor da entrada: ");
                     if (ValidaFloat(&entrada) && entrada<valorBem) {
-                        printf("%f\n", entrada);
+                        printf("%.2f\n", entrada);
                         break;
                     }
                     printf("\nEntrada inválida!\n\n");
@@ -59,6 +59,21 @@ int main() {
                 break;
             case 2:
                 printf("\nCADASTRO DE BANCO\n");
+                printf("[1] CONSULTA\n[2] INSERÇÃO\n[3] REMOÇÃO\n");
+                printf("Entre uma das opções acima: ");
+                scanf("%d", &op);
+                switch(op) {
+                while (getchar() != '\n');
+                    case 1:
+                        printf("\nCADASTRO DE BANCO > CONSULTA\n");
+                        break;
+                    case 2:
+                        printf("\nCADASTRO DE BANCO > INSERÇÃO\n");
+                        break;
+                    case 3:
+                        printf("\nCADASTRO DE BANCO > REMOÇÃO\n");
+                        break;
+                }
                 break;
             case 3:
                 printf("\nCADASTRO DE PRODUTO\n");

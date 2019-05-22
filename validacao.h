@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-int ValidaFloat(float *x) {
+int ValidaFloat(float *x) { // Parâmetro por referência permite a manipulação do valor
     char buffer[100], *endptr;
     fgets(buffer, sizeof(buffer), stdin);
     *x = strtof(buffer, &endptr);
