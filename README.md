@@ -30,7 +30,7 @@ O sistema permitirá o cadastro, a consulta e a remoção de dados de instituiç
 O cadastro de uma instituição financeira requererá as seguintes estruturas de dados:
 * Instituição financeira - **struct**
   * ID - **int**
-  * disponível (sim/não) - **int**
+  * Disponível (sim/não) - **int**
   * Nome da instituição - **char**
 * Produto (pelo menos um por instituição) - **struct** 
   * ID - **int**
