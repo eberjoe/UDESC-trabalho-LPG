@@ -1,4 +1,5 @@
 #include <stdio.h>
+//#include <stdlib.h>
 #include "validacao.h"
 
 #define MAXNOME 100
@@ -21,8 +22,10 @@ struct Produto {
 };
 
 int main() {
+    FILE *b, *p;
     int op, s=0;
     float renda, valorBem, entrada;
+    char n[MAXNOME];
     while(1) {
         printf("MENU PRINCIPAL\n");
         printf("[1] SIMULAÇÃO\n[2] CADASTRO DE BANCO\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
@@ -62,13 +65,26 @@ int main() {
                 printf("[1] CONSULTA\n[2] INSERÇÃO\n[3] REMOÇÃO\n");
                 printf("Entre uma das opções acima: ");
                 scanf("%d", &op);
-                switch(op) {
                 while (getchar() != '\n');
+                switch(op) {
                     case 1:
                         printf("\nCADASTRO DE BANCO > CONSULTA\n");
                         break;
                     case 2:
                         printf("\nCADASTRO DE BANCO > INSERÇÃO\n");
+                        printf("Entre o nome do novo banco: ");
+                        b=fopen("b.dat", "w");
+                        if (b == NULL) {
+                            fprintf(stderr, "\nError opend file\n");
+                            exit(1);
+                        }
+                        struct Banco input={1, gets(n)};
+                        fwrite(&input, sizeof(struct Banco), 1, b);
+                        if (fwrite != 0)
+                            printf("Banco inserido com sucesso!\n");
+                        else
+                            printf("Erro ao tentar inserir!\n");
+                        fclose(b);
                         break;
                     case 3:
                         printf("\nCADASTRO DE BANCO > REMOÇÃO\n");
