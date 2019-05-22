@@ -27,7 +27,7 @@ Cronograma:
 O sistema permitirá o cadastro, a consulta e a remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá ao usuário efetuar simulações de financiamento, apresentando na tela a progressão da amortização.
 
 ## Dados para Cadastro
-O cadastro de uma instituição financeira requererá as seguintes estruturas de dados:
+O cadastro de instituições financeiras requererá as seguintes estruturas de dados:
 ``` C
 #define MAXNOME 100
 
