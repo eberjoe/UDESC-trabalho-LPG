@@ -33,12 +33,12 @@ int main() {
                 while (getchar() != '\n');
                 printf("\nSIMULAÇÃO\n");
                 while(1) {
-                    printf("Entre o valor da renda bruta do contraente: ");
+                    printf("Entre o valor da renda bruta mensal do contraente: ");
                     if (ValidaFloat(&renda)) {
                         printf("%f\n", renda);
                         break;
                     }
-                    printf("\n\nEntrada inválida!\n\n");
+                    printf("\nEntrada inválida!\n\n");
                 }
                 while(1) {
                     printf("Entre o valor do bem a ser adquirido: ");
@@ -46,15 +46,15 @@ int main() {
                         printf("%f\n", valorBem);
                         break;
                     }
-                    printf("\n\nEntrada inválida!\n\n");
+                    printf("\nEntrada inválida!\n\n");
                 }
                 while(1) {
                     printf("Entre o valor da entrada: ");
-                    if (ValidaFloat(&entrada)) {
+                    if (ValidaFloat(&entrada) && entrada<valorBem) {
                         printf("%f\n", entrada);
                         break;
                     }
-                    printf("\n\nEntrada inválida!\n\n");
+                    printf("\nEntrada inválida!\n\n");
                 }
                 break;
             case 2:
@@ -69,7 +69,7 @@ int main() {
                 break;
             /* VALIDAÇÃO DO MENU PRINCIPAL */
             default:
-                printf("\n\nOPÇÃO INVÁLIDA!\n\n");
+                printf("\nOPÇÃO INVÁLIDA!\n\n");
                 while (getchar() != '\n');
         }
         if (s) break;
