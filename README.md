@@ -28,20 +28,27 @@ O sistema permitirá o cadastro, a consulta e a remoção de dados de instituiç
 
 ## Dados para Cadastro
 O cadastro de uma instituição financeira requererá as seguintes estruturas de dados:
-* Instituição financeira - **struct**
-  * ID - **int**
-  * Disponível (sim/não) - **int**
-  * Nome da instituição - **char**
-* Produto (pelo menos um por instituição) - **struct** 
-  * ID - **int**
-  * Disponível (sim/não) - **int**
-  * ID da instituição - **int**
-  * Nome do produto - **char**
-  * Sistema de amortização (SAC ou PRICE) - **char**
-  * Porcentagem máxima de financiamento - **float**
-  * Taxa efetiva de juros - **float**
-  * Prazo máximo em meses - **int**
-  * Porcentagem máxima de comprometimento da renda - **float**
+``` C
+#define MAXNOME 100
+
+struct Banco {
+    int idBanco; // identificador da instituição financeira
+    int disponivel; // flag indicando se o banco está disponível
+    char nome[MAXNOME]; // nome da instituição financeira
+};
+
+struct Produto {
+    int idProduto; // identificador do produto
+    int disponivel; // flag indicando se o produto está disponível ou não
+    int idBanco; // identificador da instituição financeira à qual o produto pertence (chave externa)
+    char nome[MAXNOME]; // nome do produto
+    char sistAmortizacao; // caracter indicando o sistema de amortização que pode ser SAC ('S') ou PRICE ('P')
+    float maxPorcentFinanc; // número entre 0 e 1 indicando a máxima porção financiável de um valor
+    float taxaEfetivaJuros; // número entre 0 e 1 indicando a taxa efetiva de juros
+    int prazoMax; // número inteiro indicando a máxima quantidade de meses permitida para o financiamento
+    float maxPorcentRenda; // número entre 0 e 1 indicando o máximo comprometimento da renda permitido
+};
+```
 
 ## Dados para a Simulação
 A simulação de financiamento requererá os seguintes dados do contraente:
@@ -63,3 +70,6 @@ Os nomes das entidades seguirão o seguinte padrão:
 |campos e variáveis|camel case|idProduto|
 |structs e funções -- exceto **main()**|pascal case|ByPassModel|
 |bibliotecas e arquivos de apoio -- exceto **README.md**|lower case|mathfunctions|
+
+## Remoção de Registros
+A remoção de registros de instituições e de produtos se dará através do zeramento do campo **disponível**
