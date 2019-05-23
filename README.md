@@ -33,7 +33,7 @@ O cadastro de instituições financeiras requererá as seguintes estruturas de d
 
 struct Banco {
     int idBanco; // identificador da instituição financeira
-    int disponivel; // flag indicando se a instituição financeira está disponível
+    int disponivel; // flag indicando se a instituição financeira está disponível ou não
     char nome[MAXNOME]; // nome da instituição financeira
 };
 
