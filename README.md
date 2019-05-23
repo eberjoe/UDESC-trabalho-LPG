@@ -71,7 +71,7 @@ Os nomes das entidades seguirão o seguinte padrão:
 |structs e funções -- exceto **```main()```**|pascal case|ByPassModel|
 |bibliotecas e arquivos de apoio -- exceto **```README.md```**|lower case|mathfunctions|
 
-## Remoção de Dados
+## Exclusão de Dados
 A remoção de registros de instituições e de produtos se dará através do zeramento do campo **```disponivel```**. Ao efetuar a inserção de um novo registro, o sistema deverá primeiro procurar por um registro com **```disponivel == 0```** e sobrescrever nele o novo registro. O sistema adicionará novos registros ao fim do arquivo somente nos casos em que não houver registros com **```disponivel == 0```**. Isto limitará a geração de lixo e o desperdício de recursos.
 
 Para que os identificadores sejam unívocos, um contador do tipo **```int```** será adicionado ao final do arquivo com o fim de ser lido e incrementado a cada inserção.
