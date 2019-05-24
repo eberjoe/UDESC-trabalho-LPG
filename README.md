@@ -43,7 +43,7 @@ struct Produto {
     int idBanco; // identificador da instituição financeira à qual o produto pertence (chave externa)
     char nome[MAXNOME]; // nome do produto
     char sistAmortizacao; // caracter indicando o sistema de amortização que pode ser SAC ('S') ou PRICE ('P')
-    float maxPorcentFinanc; // número entre 0 e 1 indicando a máxima porção financiável de um valor
+    float maxPorcentFinanc; // número entre 0 e 1 indicando a máxima porção financiável do preço total
     float taxaEfetivaJuros; // número entre 0 e 1 indicando a taxa efetiva de juros
     int prazoMax; // número inteiro indicando a máxima quantidade de meses permitida para o financiamento
     float maxPorcentRenda; // número entre 0 e 1 indicando o máximo comprometimento da renda permitido
@@ -52,9 +52,9 @@ struct Produto {
 
 ## Dados para a Simulação
 A simulação de financiamento requererá os seguintes dados do contraente:
-* Renda - **float**
-* Valor total do bem a ser adquirido - **float**
-* Valor disponível para entrada - **float**
+* Renda - **```float```**
+* Valor total do bem a ser adquirido - **```float```**
+* Valor disponível para entrada - **```float```**
 
 O sistema deverá retornar as opções disponíveis de acordo com a base de dados, ou uma mensagem indicando que não há opções para os valores fornecidos. 
 
