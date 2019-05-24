@@ -1,4 +1,6 @@
-# Requisitos
+# Trabalho LPG-1
+
+## Requisitos
 Faça seu próprio sistema de controle de dados que resolva algum problema real, empresarial ou pessoal.
 
 Cronograma:
@@ -21,12 +23,12 @@ Cronograma:
 |Apresentação e organização|1,0|
 |Presença (durante o mês de junho e principalmente na apresentação final)|1,0|
 
-# Sistema de Cadastro de Instituições Financeiras e Simulação de Financiamento
+## Cadastro de Instituições Financeiras e Simulação de Financiamento
 
-## Introdução
+### Introdução
 O sistema permitirá o cadastro, a consulta e a remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá ao usuário efetuar simulações de financiamento, apresentando na tela a progressão da amortização.
 
-## Dados para Cadastro
+### Dados para Cadastro
 O cadastro de instituições financeiras requererá as seguintes estruturas de dados:
 ``` C
 #define MAXNOME 100
@@ -50,7 +52,7 @@ struct Produto {
 };
 ```
 
-## Dados para a Simulação
+### Dados para a Simulação
 A simulação de financiamento requererá os seguintes dados do contraente:
 * Renda - **```float```**
 * Valor total do bem a ser adquirido - **```float```**
@@ -58,10 +60,7 @@ A simulação de financiamento requererá os seguintes dados do contraente:
 
 O sistema deverá retornar as opções disponíveis de acordo com a base de dados, ou uma mensagem indicando que não há opções para os valores fornecidos. 
 
-## Expectativa
-O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil.
-
-## Convenção para Nomes
+### Convenção para Nomes
 Os nomes das entidades seguirão o seguinte padrão:
 
 |Tipo|Formato|Exemplo|
@@ -71,9 +70,12 @@ Os nomes das entidades seguirão o seguinte padrão:
 |structs e funções -- exceto **```main()```**|pascal case|ByPassModel|
 |bibliotecas e arquivos de apoio -- exceto **```README.md```**|lower case|mathfunctions|
 
-## Exclusão de Dados
+### Exclusão de Dados
 A remoção de registros de instituições e de produtos se dará através do zeramento do campo **```disponivel```**. Ao efetuar a inserção de um novo registro, o sistema deverá primeiro procurar por um registro com **```disponivel == 0```** e sobrescrever nele o novo registro. O sistema adicionará novos registros ao fim do arquivo somente nos casos em que não houver registros com **```disponivel == 0```**. Isto limitará a geração de lixo e o desperdício de recursos.
 
 Para que os identificadores sejam unívocos, um contador do tipo **```int```** será adicionado ao final do arquivo com o fim de ser lido e incrementado a cada inserção.
 
 Os registros com o campo **```disponivel```** zerado não serão visíveis ao usuário seja para consulta ou para edição.
+
+### Expectativa
+O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil, auxiliando o usuário na tomada de decisões.
