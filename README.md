@@ -75,7 +75,7 @@ A remoção de registros de instituições e de produtos se dará através do ze
 
 Para que os identificadores sejam unívocos, um contador do tipo **```int```** será adicionado no início do arquivo com o fim de ser lido e incrementado a cada inserção.
 
-Os registros com o campo **```disponivel```** zerado não serão visíveis ao usuário seja para consulta ou para edição.
+Os registros com o campo **```disponivel```** zerado serão inacessíveis ao usuário seja para consulta ou para edição.
 
 ### Expectativa
 O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil, auxiliando o usuário na tomada de decisões.
