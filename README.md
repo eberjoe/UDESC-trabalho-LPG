@@ -44,7 +44,7 @@ struct Produto {
     int disponivel; // flag indicando se o produto está disponível ou não
     int idBanco; // identificador da instituição financeira à qual o produto pertence (chave externa)
     char nome[MAXNOME]; // nome do produto
-    char sistAmortizacao; // caracter indicando o sistema de amortização que pode ser SAC ('S') ou PRICE ('P')
+    int sistAmortizacao; // indica o sistema de amortização que pode ser SAC (0) ou PRICE (!=0)
     float maxPorcentFinanc; // número entre 0 e 1 indicando a máxima porção financiável do preço total
     float taxaEfetivaJuros; // número entre 0 e 1 indicando a taxa efetiva de juros
     int prazoMax; // número inteiro indicando a máxima quantidade de meses permitida para o financiamento
