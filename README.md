@@ -80,8 +80,8 @@ Os registros com o campo **```disponivel```** zerado serão inacessíveis ao usu
 ### Expectativa
 O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil, auxiliando o usuário na tomada de decisões.
 
-### Conceitos que Não Foram Estudados na Disciplina
+### Conceitos e Técnicas que Não Foram Estudados na Disciplina
 * Associação de estruturas de dados através de chave externa.
 * Atribuição dentro de cláusulas condicionais.
-* Uso do valor de retorno da função **```fopen()```** no modo **```rb```** para verificação da existência do arquivo.
+* Uso do valor de retorno da função **```fopen()```** no modo **```r```** para verificação da existência do arquivo.
 * Uso do valor de retorno da função **```scanf()```** para a validação da entrada de dados do usuário.
