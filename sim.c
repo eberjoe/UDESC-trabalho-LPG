@@ -46,85 +46,96 @@ int main() {
     int op, s=0;
     float renda, valorBem, entrada;
     while (1) {
-        printf("MENU PRINCIPAL\n");
+        printf("\n\nMENU PRINCIPAL\n");
         printf("[1] SIMULAÇÃO\n[2] CADASTRO DE BANCO\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
         printf("Entre uma das opções acima: ");
-        scanf("%d", &op);
-        while (getchar() != '\n');
-        switch(op) {
-            case 1:
-                printf("\nSIMULAÇÃO\n");
-                while(1) {
-                    printf("Entre o valor da renda bruta mensal do contraente: ");
-                    if (ValidaFloat(&renda)) {
-                        printf("%.2f\n", renda);
-                        break;
+        if (scanf("%d", &op)) { // valida a opção do menu como int
+            while (getchar() != '\n');
+            switch(op) {
+                case 1:
+                    printf("\nSIMULAÇÃO\n");
+                    while(1) {
+                        printf("Entre o valor da renda bruta mensal do contraente: ");
+                        if (ValidaFloat(&renda) && renda != 0) {
+                            printf("%.2f\n", renda);
+                            break;
+                        }
+                        printf("\nEntrada inválida!\n\n");
                     }
-                    printf("\nEntrada inválida!\n\n");
-                }
-                while (1) {
-                    printf("Entre o valor do bem a ser adquirido: ");
-                    if (ValidaFloat(&valorBem)) {
-                        printf("%.2f\n", valorBem);
-                        break;
+                    while (1) {
+                        printf("Entre o valor do bem a ser adquirido: ");
+                        if (ValidaFloat(&valorBem) && valorBem != 0) {
+                            printf("%.2f\n", valorBem);
+                            break;
+                        }
+                        printf("\nEntrada inválida!\n\n");
                     }
-                    printf("\nEntrada inválida!\n\n");
-                }
-                while (1) {
-                    printf("Entre o valor da entrada: ");
-                    if (ValidaFloat(&entrada) && entrada<valorBem) {
-                        printf("%.2f\n", entrada);
-                        break;
+                    while (1) {
+                        printf("Entre o valor da entrada: ");
+                        if (ValidaFloat(&entrada) && entrada<valorBem && entrada != 0) {
+                            printf("%.2f\n", entrada);
+                            break;
+                        }
+                        printf("\nEntrada inválida!\n\n");
                     }
-                    printf("\nEntrada inválida!\n\n");
-                }
-                break;
-            case 2:
-                printf("\nCADASTRO DE BANCO\n");
-                printf("[1] CONSULTA\n[2] INSERÇÃO\n[3] REMOÇÃO\n");
-                printf("Entre uma das opções acima: ");
-                scanf("%d", &op);
-                while (getchar() != '\n');
-                switch(op) {
-                    case 1:
-                        printf("\nCADASTRO DE BANCO > CONSULTA\n");
-                        if (!ListaBancos())
-                            printf("\nNão há bancos cadastrados!\n\n");
-                        break;
-                    case 2:
-                        printf("\nCADASTRO DE BANCO > INSERÇÃO\n");
-                        printf("Entre o nome do novo banco: ");
-                        gets(n);
-                        if (InsereBanco(n))
-                            printf("\nBanco inserido com sucesso!\n\n");
-                        else
-                            printf("\nErro ao inserir!\n\n");
-                        break;
-                    case 3:
-                        printf("\nCADASTRO DE BANCO > REMOÇÃO\n");
-                        printf("\nATENÇÃO! A remoção de um banco remove também todos os seus produtos!\n\n");
-                        printf("Entre o ID do banco a ser removido: ");
-                        scanf("%d", &id);
+                    break;
+                case 2:
+                    printf("\nCADASTRO DE BANCO\n");
+                    printf("[1] CONSULTA\n[2] INSERÇÃO\n[3] REMOÇÃO\n");
+                    printf("Entre uma das opções acima: ");
+                    if (scanf("%d", &op)) { // valida a opção do menu como int
+                        if (op != (int) op)
+                            op=0;
                         while (getchar() != '\n');
-                        if (RemoveBanco(id))
-                            printf("\nO banco %s foi removido com sucesso!\n\n", NomeBanco(id));
-                        else
-                            printf("\nID não encontrado!\n\n");
-                        break;
-                    default:
-                        printf("\nOPÇÃO INVÁLIDA!\n\n");
-                }
-                break;
-            case 3:
-                printf("\nCADASTRO DE PRODUTO\n");
-                break;
-            case 4:
-                printf("\nOBRIGADO!\n");
-                s=1;
-                break;
-            /* VALIDAÇÃO DO MENU PRINCIPAL */
-            default:
-                printf("\nOPÇÃO INVÁLIDA!\n\n");
+                        switch(op) {
+                            case 1:
+                                printf("\nCADASTRO DE BANCO > CONSULTA\n");
+                                if (!ListaBancos())
+                                    printf("\nNão há bancos cadastrados!\n\n");
+                                break;
+                            case 2:
+                                printf("\nCADASTRO DE BANCO > INSERÇÃO\n");
+                                printf("Entre o nome do novo banco: ");
+                                gets(n);
+                                if (InsereBanco(n))
+                                    printf("\nBanco inserido com sucesso!\n\n");
+                                else
+                                    printf("\nErro ao inserir!\n\n");
+                                break;
+                            case 3:
+                                printf("\nCADASTRO DE BANCO > REMOÇÃO\n");
+                                printf("\nATENÇÃO! A remoção de um banco remove também todos os seus produtos!\n\n");
+                                printf("Entre o ID do banco a ser removido: ");
+                                scanf("%d", &id);
+                                while (getchar() != '\n');
+                                if (RemoveBanco(id))
+                                    printf("\nO banco %s foi removido com sucesso!\n\n", NomeBanco(id));
+                                else
+                                    printf("\nID não encontrado!\n\n");
+                                break;
+                            /* VALIDAÇÃO DO MENU CADASTRO DE BANCO */
+                            default:
+                                printf("\nOPÇÃO INVÁLIDA!\n\n");
+                        }
+                    }
+                    else {
+                        while (getchar() != '\n');
+                    }
+                    break;
+                case 3:
+                    printf("\nCADASTRO DE PRODUTO\n");
+                    break;
+                case 4:
+                    printf("\nOBRIGADO!\n");
+                    s=1;
+                    break;
+                /* VALIDAÇÃO DO MENU PRINCIPAL */
+                default:
+                    printf("\nOPÇÃO INVÁLIDA!\n\n");
+            }
+        }
+        else {
+            while (getchar() != '\n');
         }
         if (s) break;
     }
