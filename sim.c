@@ -33,9 +33,9 @@ struct Produto leituraProduto, entradaProduto;
 int InsereBanco(char[]);
 int ListaBancos();
 int RemoveBanco(int);
-void InsereProdutoParaBanco(char[], int, float, float, int, float);
-void ListaProdutos();
-void RemoveProduto(int);
+int InsereProdutoParaBanco(char[], int, float, float, int, float);
+int ListaProdutos();
+int RemoveProduto(int);
 
 /* OUTROS PROTÓTIPOS */
 char* NomeBanco(int);
@@ -107,7 +107,7 @@ int main() {
                         scanf("%d", &id);
                         while (getchar() != '\n');
                         if (RemoveBanco(id))
-                            printf("\nBanco removido com sucesso!\n\n");
+                            printf("\nO banco %s foi removido com sucesso!\n\n", NomeBanco(id));
                         else
                             printf("\nID não encontrado!\n\n");
                         break;
@@ -150,7 +150,7 @@ int InsereBanco(char nome[]) {
     entradaBanco.idBanco=id;
     strcpy(entradaBanco.nome, nome);
     bancos=fopen("b.bin", "rb+");
-    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao ID
+    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
     while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) { // percorre o arquivo
         if (!leituraBanco.disponivel) { // confere se há um registro excluído
             fseek(bancos, ftell(bancos)-sizeof(struct Banco), SEEK_SET); // retorna o cursor do arquivo para o início do registro excluído
@@ -179,7 +179,7 @@ int ListaBancos() {
             fprintf(stderr, "\nErro ao abrir o arquivo!\n\n");
             exit(1);
         }
-        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao ID
+        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
         while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
             if (leituraBanco.disponivel) {
                 printf("ID:\t%d\nNome:\t%s\n\n", leituraBanco.idBanco, leituraBanco.nome);
@@ -198,7 +198,7 @@ int RemoveBanco(int idBanco) {
         fprintf(stderr, "\nErro ao abrir o arquivo!\n\n");
         exit(1);
     }
-    fseek(bancos, sizeof(int), SEEK_SET); //salta o espaço reservado ao ID
+    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
     while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
         if (leituraBanco.idBanco == idBanco && leituraBanco.disponivel) {
             entradaBanco=leituraBanco;
@@ -214,7 +214,7 @@ int RemoveBanco(int idBanco) {
     }
     fclose(bancos);
     if (produtos=fopen("p.bin", "rb+")) { // confere se já existe um arquivo de produtos
-        fseek(produtos, sizeof(int), SEEK_SET); //salta o espaço reservado ao ID
+        fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
         while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
             if (leituraProduto.idBanco == idBanco && leituraProduto.disponivel) {
                 entradaProduto=leituraProduto;
@@ -226,4 +226,36 @@ int RemoveBanco(int idBanco) {
         fclose(produtos);
     }
     return i;
+}
+
+char* NomeBanco(int idBanco) {
+    char* c=NULL;
+    if (bancos=fopen("b.bin", "rb")) { // confere se já existe um arquivo de bancos
+        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+        while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
+            if (leituraBanco.idBanco == idBanco) {
+                c=(char*) malloc(MAXNOME*sizeof(char));
+                strcpy(c, leituraBanco.nome);
+                break;
+            }
+        }
+        fclose(bancos);
+    }
+    return c;
+}
+
+char* NomeProduto(int idProduto) {
+    char* c=NULL;
+    if (produtos=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
+        fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+        while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+            if (leituraProduto.idProduto == idProduto) {
+                c=(char*) malloc(MAXNOME*sizeof(char));
+                strcpy(c, leituraProduto.nome);
+                break;
+            }
+        }
+        fclose(produtos);
+    }
+    return c;
 }
