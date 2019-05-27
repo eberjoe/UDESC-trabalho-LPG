@@ -1,7 +1,6 @@
 #include <stdio.h>
 //#include <stdlib.h>
 //#include <string.h>
-#include "validacao.h"
 #define MAXNOME 100
 
 /* ESTRUTURAS */
@@ -44,7 +43,7 @@ char* NomeProduto(int);
 int main() {
     char n[MAXNOME];
     int op, s=0;
-    float renda, valorBem, entrada;
+    float renda=0, valorBem=0, entrada=0;
     while (1) {
         printf("\n\nMENU PRINCIPAL\n");
         printf("[1] SIMULAÇÃO\n[2] CADASTRO DE BANCO\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
@@ -54,29 +53,28 @@ int main() {
             switch(op) {
                 case 1:
                     printf("\nSIMULAÇÃO\n");
-                    while(1) {
-                        printf("Entre o valor da renda bruta mensal do contraente: ");
-                        if (ValidaFloat(&renda) && renda != 0) {
-                            printf("%.2f\n", renda);
-                            break;
-                        }
+                    printf("Entre o valor da renda bruta mensal do contraente: ");
+                    if (scanf("%f", &renda) && renda > 0)
+                        printf("R$ %.2f\n", renda);
+                    else {
                         printf("\nEntrada inválida!\n\n");
+                        while (getchar() != '\n');
+                        break;
                     }
-                    while (1) {
-                        printf("Entre o valor do bem a ser adquirido: ");
-                        if (ValidaFloat(&valorBem) && valorBem != 0) {
-                            printf("%.2f\n", valorBem);
-                            break;
-                        }
+                    printf("Entre o valor do bem a ser adquirido: ");
+                    if (scanf("%f", &valorBem) && valorBem > 0)
+                        printf("R$ %.2f\n", valorBem);
+                    else {
                         printf("\nEntrada inválida!\n\n");
+                        while (getchar() != '\n');
+                        break;
                     }
-                    while (1) {
-                        printf("Entre o valor da entrada: ");
-                        if (ValidaFloat(&entrada) && entrada<valorBem && entrada != 0) {
-                            printf("%.2f\n", entrada);
-                            break;
-                        }
+                    printf("Entre o valor da entrada: ");
+                    if (scanf("%f", &entrada) && entrada > 0 && entrada < valorBem)
+                        printf("R$ %.2f\n", entrada);
+                    else {
                         printf("\nEntrada inválida!\n\n");
+                        while (getchar() != '\n');
                     }
                     break;
                 case 2:
@@ -119,6 +117,7 @@ int main() {
                         }
                     }
                     else {
+                        printf("\nOPÇÃO INVÁLIDA!\n\n");
                         while (getchar() != '\n');
                     }
                     break;
@@ -135,6 +134,7 @@ int main() {
             }
         }
         else {
+            printf("\nOPÇÃO INVÁLIDA!\n\n");
             while (getchar() != '\n');
         }
         if (s) break;
