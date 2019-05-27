@@ -32,9 +32,9 @@ struct Produto leituraProduto, entradaProduto;
 int InsereBanco(char[]);
 int ListaBancos();
 int RemoveBanco(int);
-int InsereProdutoParaBanco(char[], int, float, float, int, float);
-int ListaProdutos();
-int RemoveProduto(int);
+int InsereProdutoParaBanco(char[], int, float, float, int, float); //implementar
+int ListaProdutos(); // implementar
+int RemoveProduto(int); // implementar
 
 /* OUTROS PROTÓTIPOS */
 char* NomeBanco(int);
@@ -48,43 +48,41 @@ int main() {
         printf("\n\nMENU PRINCIPAL\n");
         printf("[1] SIMULAÇÃO\n[2] CADASTRO DE BANCO\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
         printf("Entre uma das opções acima: ");
-        if (scanf("%d", &op)) { // valida a opção do menu como int
-            while (getchar() != '\n');
+        if (scanf("%d", &op) && op >= 1 && op <= 4) { // valida a opção do menu como int dentro do intervalo de opções
+            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
             switch(op) {
                 case 1:
                     printf("\nSIMULAÇÃO\n");
                     printf("Entre o valor da renda bruta mensal do contraente: ");
-                    if (scanf("%f", &renda) && renda > 0)
+                    if (scanf("%f", &renda) && renda > 0) // valida o valor como float maior que zero
                         printf("R$ %.2f\n", renda);
                     else {
                         printf("\nEntrada inválida!\n\n");
-                        while (getchar() != '\n');
+                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                         break;
                     }
                     printf("Entre o valor do bem a ser adquirido: ");
-                    if (scanf("%f", &valorBem) && valorBem > 0)
+                    if (scanf("%f", &valorBem) && valorBem > 0) // valida o valor como float maior que zero
                         printf("R$ %.2f\n", valorBem);
                     else {
                         printf("\nEntrada inválida!\n\n");
-                        while (getchar() != '\n');
+                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                         break;
                     }
                     printf("Entre o valor da entrada: ");
-                    if (scanf("%f", &entrada) && entrada > 0 && entrada < valorBem)
+                    if (scanf("%f", &entrada) && entrada > 0 && entrada < valorBem) // valida o valor como float maior que zero e menor que o preço total
                         printf("R$ %.2f\n", entrada);
                     else {
                         printf("\nEntrada inválida!\n\n");
-                        while (getchar() != '\n');
+                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                     }
                     break;
                 case 2:
                     printf("\nCADASTRO DE BANCO\n");
                     printf("[1] CONSULTA\n[2] INSERÇÃO\n[3] REMOÇÃO\n");
                     printf("Entre uma das opções acima: ");
-                    if (scanf("%d", &op)) { // valida a opção do menu como int
-                        if (op != (int) op)
-                            op=0;
-                        while (getchar() != '\n');
+                    if (scanf("%d", &op) && op >= 1 && op <= 3) { // valida a opção do menu como int dentro do intervalo de opções
+                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                         switch(op) {
                             case 1:
                                 printf("\nCADASTRO DE BANCO > CONSULTA\n");
@@ -104,16 +102,17 @@ int main() {
                                 printf("\nCADASTRO DE BANCO > REMOÇÃO\n");
                                 printf("\nATENÇÃO! A remoção de um banco remove também todos os seus produtos!\n\n");
                                 printf("Entre o ID do banco a ser removido: ");
-                                scanf("%d", &id);
-                                while (getchar() != '\n');
-                                if (RemoveBanco(id))
-                                    printf("\nO banco %s foi removido com sucesso!\n\n", NomeBanco(id));
-                                else
-                                    printf("\nID não encontrado!\n\n");
-                                break;
-                            /* VALIDAÇÃO DO MENU CADASTRO DE BANCO */
-                            default:
-                                printf("\nOPÇÃO INVÁLIDA!\n\n");
+                                if (scanf("%d", &id)) { // valida o ID como int
+                                    while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                    if (RemoveBanco(id))
+                                        printf("\nO banco %s foi removido com sucesso!\n\n", NomeBanco(id));
+                                    else
+                                        printf("\nID não encontrado!\n\n");
+                                }
+                                else {
+                                    printf("\nEntrada inválida!\n\n");
+                                    while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                }
                         }
                     }
                     else {
@@ -127,15 +126,11 @@ int main() {
                 case 4:
                     printf("\nOBRIGADO!\n");
                     s=1;
-                    break;
-                /* VALIDAÇÃO DO MENU PRINCIPAL */
-                default:
-                    printf("\nOPÇÃO INVÁLIDA!\n\n");
             }
         }
         else {
             printf("\nOPÇÃO INVÁLIDA!\n\n");
-            while (getchar() != '\n');
+            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
         }
         if (s) break;
     }
