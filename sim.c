@@ -31,11 +31,15 @@ struct Produto leituraProduto, entradaProduto;
 
 /* PROTÓTIPOS DAS FUNÇÕES CRUD */
 int InsereBanco(char[]);
-void ListaBancos();
+int ListaBancos();
 int RemoveBanco(int);
 void InsereProdutoParaBanco(char[], int, float, float, int, float);
 void ListaProdutos();
 void RemoveProduto(int);
+
+/* OUTROS PROTÓTIPOS */
+char* NomeBanco(int);
+char* NomeProduto(int);
 
 int main() {
     char n[MAXNOME];
@@ -84,7 +88,8 @@ int main() {
                 switch(op) {
                     case 1:
                         printf("\nCADASTRO DE BANCO > CONSULTA\n");
-                        ListaBancos();
+                        if (!ListaBancos())
+                            printf("\nNão há bancos cadastrados!\n\n");
                         break;
                     case 2:
                         printf("\nCADASTRO DE BANCO > INSERÇÃO\n");
@@ -167,20 +172,23 @@ int InsereBanco(char nome[]) {
     return i;
 }
 
-void ListaBancos() {
-    bancos=fopen("b.bin", "rb");
-    if (bancos == NULL) {
-        fprintf(stderr, "\nErro ao abrir o arquivo!\n\n");
-        exit(1);
-    }
-    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao ID
-    while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
-        if (leituraBanco.disponivel) {
-            printf("ID:\t%d\nNome:\t%s\n\n", leituraBanco.idBanco, leituraBanco.nome);
+int ListaBancos() {
+    int i=0;
+    if (bancos=fopen("b.bin", "rb")) { //confere se já existe um arquivo de bancos
+        if (bancos == NULL) {
+            fprintf(stderr, "\nErro ao abrir o arquivo!\n\n");
+            exit(1);
         }
+        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao ID
+        while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
+            if (leituraBanco.disponivel) {
+                printf("ID:\t%d\nNome:\t%s\n\n", leituraBanco.idBanco, leituraBanco.nome);
+            }
+        }
+        fclose(bancos);
+        i++;
     }
-    fclose(bancos);
-    return;
+    return i;
 }
 
 int RemoveBanco(int idBanco) {
