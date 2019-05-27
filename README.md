@@ -23,7 +23,7 @@ Cronograma:
 |Apresentação e organização|1,0|
 |Presença (durante o mês de junho e principalmente na apresentação final)|1,0|
 
-## Cadastro de Instituições Financeiras e Simulação de Financiamento
+## Cadastro de Bancos com seus Produtos Financeiros e Simulação de Financiamento
 
 ### Introdução
 O sistema permitirá o cadastro, a consulta e a remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá ao usuário efetuar simulações de financiamento, apresentando na tela a progressão da amortização.
@@ -71,7 +71,7 @@ Os nomes das entidades seguirão o seguinte padrão:
 |bibliotecas e arquivos de apoio -- exceto **```README.md```**|lower case|mathfunctions|
 
 ### Exclusão de Dados
-A remoção de registros de instituições e de produtos se dará através do zeramento do campo **```disponivel```**. Ao efetuar a inserção de um novo registro, o sistema deverá primeiro procurar por um registro com **```disponivel == 0```** e sobrescrever nele o novo registro. O sistema adicionará novos registros ao fim do arquivo somente nos casos em que não houver registros com **```disponivel == 0```**. Isto limitará a geração de lixo e o desperdício de recursos.
+A remoção de registros de bancos e de produtos se dará através do zeramento do campo **```disponivel```**. Ao efetuar a inserção de um novo registro, o sistema deverá primeiro procurar por um registro com **```disponivel == 0```** e sobrescrever nele o novo registro. O sistema adicionará novos registros ao fim do arquivo somente nos casos em que não houver registros com **```disponivel == 0```**. Isto limitará a geração de lixo e o desperdício de recursos.
 
 Para que os identificadores sejam unívocos, seus valores provirão de um contador do tipo **```int```** alocado no início do arquivo com o fim de ser lido e incrementado a cada inserção de registro.
 
