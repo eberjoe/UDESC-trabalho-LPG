@@ -42,7 +42,7 @@ char* NomeBanco(int);
 char* NomeProduto(int);
 
 int main() {
-    setlocale (LC_ALL, "portuguese");
+    setlocale(LC_ALL, "portuguese");
     char n[MAXNOME];
     int op, s=0;
     float renda=0, valorBem=0, entrada=0;
