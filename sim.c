@@ -29,51 +29,13 @@ int id;
 struct Banco leituraBanco, entradaBanco;
 struct Produto leituraProduto, entradaProduto;
 
-/* FUNÇÕES CRUD */
-void InsereBanco(char nome[MAXNOME]) {
-    int sobrescrita=0;
-    if (bancos=fopen("b.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
-        fread(&id, sizeof(int), 1, bancos);
-        id++;
-        rewind(bancos);
-        fwrite(&id, sizeof(int), 1, bancos);
-        fclose(bancos);
-    }
-    else {
-        id=1;
-        bancos=fopen("b.bin", "wb"); // cria um arquivo do zero
-        fwrite(&id, sizeof(int), 1, bancos);
-        fclose(bancos);
-    }
-    entradaBanco.disponivel=1;
-    entradaBanco.idBanco=id;
-    strcpy(entradaBanco.nome, nome);
-    bancos=fopen("b.bin", "rb+");
-    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao ID
-    while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) { // percorre o arquivo
-        if (!leituraBanco.disponivel) { // confere se há um registro excluído
-            fseek(bancos, ftell(bancos)-sizeof(struct Banco), SEEK_SET); // retorna o cursor do arquivo para o início do registro excluído
-            fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos); //sobrescreve
-            if (fwrite != 0)
-                printf("\nBanco inserido com sucesso!\n\n");
-            else
-                printf("\nErro ao inserir!\n\n");
-            sobrescrita=1;
-            break;
-        }
-    }
-    fclose(bancos);
-    if (!sobrescrita) {
-        bancos=fopen("b.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
-        fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos);
-        if (fwrite != 0)
-            printf("\nBanco inserido com sucesso!\n\n");
-        else
-            printf("\nErro ao inserir!\n\n");
-        fclose(bancos);
-    }
-    return;
-}
+/* PROTÓTIPOS DAS FUNÇÕES CRUD */
+void InsereBanco(char[]);
+void ListaBancos();
+void RemoveBanco(int);
+void InsereProdutoParaBanco(char[], int, float, float, int, float);
+void ListaProdutos();
+void RemoveProduto(int);
 
 int main() {
     char n[MAXNOME];
@@ -122,17 +84,7 @@ int main() {
                 switch(op) {
                     case 1:
                         printf("\nCADASTRO DE BANCO > CONSULTA\n");
-                        bancos=fopen("b.bin", "rb");
-                        if (bancos == NULL) {
-                            fprintf(stderr, "\nErro tentando abrir o arquivo!\n\n");
-                            exit(1);
-                        }
-                        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao ID
-                        while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
-                            if (leituraBanco.disponivel)
-                                printf ("ID: %d\nNome: %s\n\n", leituraBanco.idBanco, leituraBanco.nome);
-                        }
-                        fclose (bancos);
+                        ListaBancos();
                         break;
                     case 2:
                         printf("\nCADASTRO DE BANCO > INSERÇÃO\n");
@@ -161,4 +113,65 @@ int main() {
         if (s) break;
     }
     return 0;
+}
+
+void InsereBanco(char nome[]) {
+    int sobrescrita=0;
+    if (bancos=fopen("b.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
+        fread(&id, sizeof(int), 1, bancos);
+        id++;
+        rewind(bancos);
+        fwrite(&id, sizeof(int), 1, bancos);
+        fclose(bancos);
+    }
+    else {
+        id=1;
+        bancos=fopen("b.bin", "wb"); // cria um arquivo do zero
+        fwrite(&id, sizeof(int), 1, bancos);
+        fclose(bancos);
+    }
+    entradaBanco.disponivel=1;
+    entradaBanco.idBanco=id;
+    strcpy(entradaBanco.nome, nome);
+    bancos=fopen("b.bin", "rb+");
+    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao ID
+    while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) { // percorre o arquivo
+        if (!leituraBanco.disponivel) { // confere se há um registro excluído
+            fseek(bancos, ftell(bancos)-sizeof(struct Banco), SEEK_SET); // retorna o cursor do arquivo para o início do registro excluído
+            fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos); //sobrescreve
+            if (fwrite != 0)
+                printf("\nBanco inserido com sucesso!\n\n");
+            else
+                printf("\nErro ao inserir!\n\n");
+            sobrescrita=1;
+            break;
+        }
+    }
+    fclose(bancos);
+    if (!sobrescrita) {
+        bancos=fopen("b.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
+        fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos);
+        if (fwrite != 0)
+            printf("\nBanco inserido com sucesso!\n\n");
+        else
+            printf("\nErro ao inserir!\n\n");
+        fclose(bancos);
+    }
+    return;
+}
+
+void ListaBancos() {
+    bancos=fopen("b.bin", "rb");
+    if (bancos == NULL) {
+        fprintf(stderr, "\nErro tentando abrir o arquivo!\n\n");
+        exit(1);
+    }
+    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao ID
+    while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
+        if (leituraBanco.disponivel) {
+            printf("ID:\t%d\nNome:\t%s\n\n", leituraBanco.idBanco, leituraBanco.nome);
+        }
+    }
+    fclose(bancos);
+    return;
 }
