@@ -83,3 +83,5 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 ### Conceitos que Não Foram Estudados na Disciplina
 * Associação de estruturas de dados através de chave externa.
 * Atribuição dentro de cláusulas condicionais.
+* Uso do valor de retorno da função **```fopen()```** no modo **```rb```** para verificação da existência do arquivo.
+* Uso do valor de retorno da função **```scanf()```** para a validação da entrada de dados do usuário.
