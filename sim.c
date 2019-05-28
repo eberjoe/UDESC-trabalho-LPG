@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <locale.h>
-//#include <stdlib.h>
-//#include <string.h>
+#include <stdlib.h>
+#include <string.h>
 #define MAXNOME 100
 
 /* ESTRUTURAS */
@@ -33,7 +33,7 @@ struct Produto leituraProduto, entradaProduto;
 int InsereBanco(char[]);
 int ListaBancos();
 int RemoveBanco(int);
-int InsereProdutoParaBanco(char[], int, float, float, int, float); //implementar
+int InsereProdutoParaBanco(char[], int, float, float, int, float); // implementar
 int ListaProdutos(); // implementar
 int RemoveProduto(int); // implementar
 
@@ -42,10 +42,10 @@ char* NomeBanco(int);
 char* NomeProduto(int);
 
 int main() {
-    setlocale(LC_ALL, "portuguese");
+    setlocale(LC_ALL, "Portuguese");
     char n[MAXNOME];
     int op, s=0;
-    float renda=0, valorBem=0, entrada=0;
+    float renda, valorBem, entrada;
     while (1) {
         printf("\n\nMENU PRINCIPAL\n");
         printf("[1] SIMULAÇÃO\n[2] CADASTRO DE BANCO\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
@@ -107,7 +107,7 @@ int main() {
                                 if (scanf("%d", &id)) { // valida o ID como int
                                     while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                     if (RemoveBanco(id))
-                                        printf("\nO banco %s foi removido com sucesso!\n\n", NomeBanco(id));
+                                        printf("\n%s foi removido com sucesso!\n\n", NomeBanco(id));
                                     else
                                         printf("\nID não encontrado!\n\n");
                                 }
@@ -181,20 +181,32 @@ int InsereBanco(char nome[]) {
 }
 
 int ListaBancos() {
-    int i=0;
+    int i=0, j;
+    struct Banco *todosBancos=NULL, h;
     if (bancos=fopen("b.bin", "rb")) { //confere se já existe um arquivo de bancos
-        if (bancos == NULL) {
-            fprintf(stderr, "\nErro ao abrir o arquivo!\n\n");
-            exit(1);
-        }
         fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
         while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
             if (leituraBanco.disponivel) {
-                printf("ID:\t%d\nNome:\t%s\n\n", leituraBanco.idBanco, leituraBanco.nome);
+                todosBancos=(struct Banco*) realloc(todosBancos, sizeof(struct Banco)*(i+1)); // realoca espaço no array de bancos a cada banco disponível encontrado
+                todosBancos[i]=leituraBanco;
+                i++;
             }
         }
         fclose(bancos);
-        i++;
+        if (i > 1) { // ordena o array de bancos se este contiver mais de um banco
+            for (j=0; j<i-1; j++) {
+                if (todosBancos[j].idBanco > todosBancos[j+1].idBanco) {
+                    h=todosBancos[j];
+                    todosBancos[j]=todosBancos[j+1];
+                    todosBancos[j+1]=h;
+                }
+            }
+        }
+        if (i) {
+            for (j=0; j<i; j++) { // impressão na tela
+                printf("ID:\t%d\nNome:\t%s\n\n", todosBancos[j].idBanco, todosBancos[j].nome);
+            }
+        }
     }
     return i;
 }
@@ -202,10 +214,6 @@ int ListaBancos() {
 int RemoveBanco(int idBanco) {
     int i=0;
     bancos=fopen("b.bin", "rb+");
-    if (bancos == NULL) {
-        fprintf(stderr, "\nErro ao abrir o arquivo!\n\n");
-        exit(1);
-    }
     fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
     while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
         if (leituraBanco.idBanco == idBanco && leituraBanco.disponivel) {
