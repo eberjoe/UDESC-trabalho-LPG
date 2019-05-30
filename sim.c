@@ -36,19 +36,24 @@ int RemoveBanco(int);
 int InsereProdutoParaBanco(char[], int, float, float, int, float); // implementar
 int ListaProdutos(); // implementar
 int RemoveProduto(int); // implementar
+int ListaProdPorBanco(int); // implementar
+int ListaProdPorTipo(int); // implementar
 
 /* OUTROS PROTÓTIPOS */
 char* NomeBanco(int);
 char* NomeProduto(int);
+int IdBanco(char[]); // implementar
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
-    char n[MAXNOME];
-    int op, s=0;
-    float renda, valorBem, entrada;
-    while (1) {
-        printf("\n\nMENU PRINCIPAL\n");
-        printf("[1] SIMULAÇÃO\n[2] CADASTRO DE BANCO\n[3] CADASTRO DE PRODUTO FINANCEIRO\n[4] SAIR\n");
+    char n[MAXNOME], invalido[35]="\nVou fingir que não vi isso!\n\n";
+    int op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax;
+    float renda, valorBem, entrada, maxPorcentFinanc, taxaEfetivaJuros, maxPorcentRenda;
+    while (!s) {
+        sCb=0;
+        sCp=0;
+        printf("\n\n### MENU PRINCIPAL ###\n");
+        printf("[1] SIMULAÇÃO\n[2] CADASTRO DE BANCOS\n[3] CADASTRO DE PRODUTOS FINANCEIROS\n[4] SAIR\n");
         printf("Entre uma das opções acima: ");
         if (scanf("%d", &op) && op >= 1 && op <= 4) { // valida a opção do menu como int dentro do intervalo de opções
             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
@@ -59,7 +64,7 @@ int main() {
                     if (scanf("%f", &renda) && renda > 0) // valida o valor como float maior que zero
                         printf("R$ %.2f\n", renda);
                     else {
-                        printf("\nEntrada inválida!\n\n");
+                        printf("%s", invalido);
                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                         break;
                     }
@@ -67,7 +72,7 @@ int main() {
                     if (scanf("%f", &valorBem) && valorBem > 0) // valida o valor como float maior que zero
                         printf("R$ %.2f\n", valorBem);
                     else {
-                        printf("\nEntrada inválida!\n\n");
+                        printf("%s", invalido);
                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                         break;
                     }
@@ -75,55 +80,173 @@ int main() {
                     if (scanf("%f", &entrada) && entrada > 0 && entrada < valorBem) // valida o valor como float maior que zero e menor que o preço total
                         printf("R$ %.2f\n", entrada);
                     else {
-                        printf("\nEntrada inválida!\n\n");
+                        printf("%s", invalido);
                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                     }
                     break;
                 case 2:
-                    printf("\nCADASTRO DE BANCO\n");
-                    printf("[1] CONSULTA\n[2] INSERÇÃO\n[3] REMOÇÃO\n");
-                    printf("Entre uma das opções acima: ");
-                    if (scanf("%d", &op) && op >= 1 && op <= 3) { // valida a opção do menu como int dentro do intervalo de opções
-                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
-                        switch(op) {
-                            case 1:
-                                printf("\nCADASTRO DE BANCO > CONSULTA\n");
-                                if (!ListaBancos())
-                                    printf("\nNão há bancos cadastrados!\n\n");
-                                break;
-                            case 2:
-                                printf("\nCADASTRO DE BANCO > INSERÇÃO\n");
-                                printf("Entre o nome do novo banco: ");
-                                gets(n);
-                                if (InsereBanco(n))
-                                    printf("\nBanco inserido com sucesso!\n\n");
-                                else
-                                    printf("\nErro ao inserir!\n\n");
-                                break;
-                            case 3:
-                                printf("\nCADASTRO DE BANCO > REMOÇÃO\n");
-                                printf("\nATENÇÃO! A remoção de um banco remove também todos os seus produtos!\n\n");
-                                printf("Entre o ID do banco a ser removido: ");
-                                if (scanf("%d", &id)) { // valida o ID como int
-                                    while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
-                                    if (RemoveBanco(id))
-                                        printf("\n%s foi removido com sucesso!\n\n", NomeBanco(id));
+                    while(!sCb) {
+                        printf("\n### CADASTRO DE BANCOS ###\n");
+                        printf("[1] LISTA\n[2] INSERÇÃO\n[3] REMOÇÃO\n[4] VOLTA\n");
+                        printf("Entre uma das opções acima: ");
+                        if (scanf("%d", &op) && op >= 1 && op <= 4) { // valida a opção do menu como int dentro do intervalo de opções
+                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                            switch(op) {
+                                case 1:
+                                    printf("\nCADASTRO DE BANCOS > LISTA\n\n");
+                                    if (!ListaBancos())
+                                        printf("\nNão há bancos cadastrados!\n\n");
+                                    break;
+                                case 2:
+                                    printf("\nCADASTRO DE BANCOS > INSERÇÃO\n");
+                                    printf("\nEntre o nome do novo banco: ");
+                                    gets(n);
+                                    if (InsereBanco(n))
+                                        printf("\nBanco inserido com sucesso!\n\n");
                                     else
-                                        printf("\nID não encontrado!\n\n");
-                                }
-                                else {
-                                    printf("\nEntrada inválida!\n\n");
-                                    while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
-                                }
+                                        printf("\nErro ao inserir!\n\n");
+                                    break;
+                                case 3:
+                                    printf("\nCADASTRO DE BANCOS > REMOÇÃO\n");
+                                    printf("\nATENÇÃO! A remoção de um banco remove também todos os seus produtos!\n\n");
+                                    printf("Entre o ID do banco a ser removido: ");
+                                    if (scanf("%d", &id)) { // valida o ID como int
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        if (RemoveBanco(id))
+                                            printf("\n%s foi removido com sucesso!\n\n", NomeBanco(id));
+                                        else
+                                            printf("\nID não encontrado!\n\n");
+                                    }
+                                    else {
+                                        printf("%s", invalido);
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                    }
+                                    break;
+                                case 4:
+                                    sCb=1;
+                            }
                         }
-                    }
-                    else {
-                        printf("\nOPÇÃO INVÁLIDA!\n\n");
-                        while (getchar() != '\n');
+                        else {
+                            printf("%s", invalido);
+                            while (getchar() != '\n');
+                        }
                     }
                     break;
                 case 3:
-                    printf("\nCADASTRO DE PRODUTO\n");
+                    while(!sCp) {
+                        printf("\n### CADASTRO DE PRODUTOS ###\n");
+                        printf("[1] LISTA\n[2] CONSULTA POR BANCO\n[3] CONSULTA POR TIPO\n[4] INSERÇÃO\n[5] EDIÇÃO\n[6] REMOÇÃO\n[7] VOLTA\n");
+                        printf("Entre uma das opções acima: ");
+                        if (scanf("%d", &op) && op >= 1 && op <= 7) { // valida a opção do menu como int dentro do intervalo de opções
+                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                            switch(op) {
+                                case 1:
+                                    printf("\nCADASTRO DE PRODUTOS > LISTA\n");
+                                    if (!ListaProdutos())
+                                        printf("\nNão há produtos cadastrados!\n\n");
+                                    break;
+                                case 2:
+                                    printf("\nCADASTRO DE PRODUTOS > CONSULTA POR BANCO\n");
+                                    printf("\nEntre o ID do banco: ");
+                                    if (scanf("%d", &id)) { // valida ID como int
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        if (!ListaProdPorBanco(id))
+                                            printf("\nBanco não encontrado!\n\n");
+                                    }
+                                    else {
+                                        printf("%s", invalido);
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                    }
+                                    break;
+                                case 3:
+                                    printf("\nCADASTRO DE PRODUTOS > CONSULTA POR TIPO\n");
+                                    printf("\nEntre [1] para SAC ou [2] para PRICE: ");
+                                    if (scanf("%d", &op) && (op == 1 || op == 2)) { // valida opção como int entre 1 e 2
+                                        if (!ListaProdPorTipo(op))
+                                            printf("\nNão há produtos deste tipo!\n\n");
+                                    }
+                                    else {
+                                        printf("%s", invalido);
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                    }
+                                    break;
+                                case 4:
+                                    printf("\nCADASTRO DE PRODUTOS > INSERÇÃO\n");
+                                    if (!ListaBancos())
+                                        printf("\nNão há bancos cadastrados! Cadastre pelo menos um banco antes de inserir um produto.\n\n");
+                                    else {
+                                        printf("\nEntre o ID do banco que oferece o produto: ");
+                                        if (!scanf("%d", &id) || !NomeBanco(id)) { // validação do ID do banco
+                                            printf("%s", invalido);
+                                            break;
+                                        }
+                                        printf("\n%s\n", NomeBanco(id));
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        printf("\nEntre o nome do produto: ");
+                                        gets(n);
+                                        printf("\nEntre o sistema de amortização. [1] para SAC ou [2] para PRICE: ");
+                                        if (!scanf("%d", &op) || op != 1 && op != 2) { // validação da opção de produto
+                                            printf("%s", invalido);
+                                            break;
+                                        }
+                                        if (op == 1)
+                                            printf("\nSAC\n");
+                                        else
+                                            printf("\nPRICE\n");
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        printf("\nEntre a porcentagem máxima de financiamento: ");
+                                        if (!scanf("%f", &maxPorcentFinanc) || maxPorcentFinanc <= 0 || maxPorcentFinanc > 100) { // validação
+                                            printf("%s", invalido);
+                                            break;
+                                        }
+                                        printf("\n%.2f %%\n", maxPorcentFinanc);
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        printf("\nEntre a taxa percentual efetiva de juros: ");
+                                        if (!scanf("%f", &taxaEfetivaJuros) || taxaEfetivaJuros < 0) { // validação
+                                            printf("%s", invalido);
+                                            break;
+                                        }
+                                        printf("\n%.2f %%\n", taxaEfetivaJuros);
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        printf("\nEntre a porcentagem máxima de comprometimento da renda: ");
+                                        if (!scanf("%f", &maxPorcentRenda) || maxPorcentRenda <= 0 || maxPorcentRenda > 100) { // validação
+                                            printf("%s", invalido);
+                                            break;
+                                        }
+                                        printf("\n%.2f %%\n", maxPorcentRenda);
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        printf("\nEntre o número máximo de parcelas ou [0] para sair sem inserir produto: ");
+                                        if (!scanf("%d", &prazoMax) || prazoMax < 0) { // validação
+                                            printf("%s", invalido);
+                                            break;
+                                        }
+                                        if (prazoMax) {
+                                            printf("\n%d meses\n", prazoMax);
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        }
+                                        else
+                                            break;
+                                        if (InsereProdutoParaBanco(n, id, maxPorcentFinanc, taxaEfetivaJuros, prazoMax, maxPorcentRenda))
+                                            printf("\nProduto inserido com sucesso!\n\n");
+                                        else
+                                            printf("\nErro ao inserir!\n\n");
+                                    }
+                                    break;
+                                case 5:
+                                    printf("\nCADASTRO DE PRODUTOS > EDIÇÃO\n"); // COMPLETAR
+                                    break;
+                                case 6:
+                                    printf("\nCADASTRO DE PRODUTOS > REMOÇÃO\n"); //COMPLETAR
+                                    break;
+                                case 7:
+                                    sCp=1;
+                            }
+                        }
+                        else {
+                            printf("%s", invalido);
+                            while (getchar() != '\n');
+                        }
+                    }
                     break;
                 case 4:
                     printf("\nOBRIGADO!\n");
@@ -131,10 +254,9 @@ int main() {
             }
         }
         else {
-            printf("\nOPÇÃO INVÁLIDA!\n\n");
+            printf("%s", invalido);
             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
         }
-        if (s) break;
     }
     return 0;
 }
@@ -244,6 +366,26 @@ int RemoveBanco(int idBanco) {
     return i;
 }
 
+int InsereProdutoParaBanco(char nome[], int idBanco, float maxPorcentFinanc, float taxaEfetivaJuros, int prazoMax, float maxPorcentRenda) {
+    return 0;
+}
+
+int ListaProdutos() {
+    return 0;
+}
+
+int RemoveProduto(int idProduto){
+    return 0;
+}
+
+int ListaProdPorBanco(int idBanco) {
+    return 0;
+}
+
+int ListaProdPorTipo(int tipo) {
+    return 0;
+}
+
 char* NomeBanco(int idBanco) {
     char* c=NULL;
     if (bancos=fopen("b.bin", "rb")) { // confere se já existe um arquivo de bancos
@@ -274,4 +416,8 @@ char* NomeProduto(int idProduto) {
         fclose(produtos);
     }
     return c;
+}
+
+int idBanco(char nome[]) {
+    return 0;
 }
