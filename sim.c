@@ -128,7 +128,7 @@ int main() {
                         }
                         else {
                             printf("%s", invalido);
-                            while (getchar() != '\n');
+                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                         }
                     }
                     break;
@@ -176,8 +176,14 @@ int main() {
                                         printf("\nNão há bancos cadastrados! Cadastre pelo menos um banco antes de inserir um produto.\n\n");
                                     else {
                                         printf("\nEntre o ID do banco que oferece o produto: ");
-                                        if (!scanf("%d", &id) || !NomeBanco(id)) { // validação do ID do banco
+                                        if (!scanf("%d", &id)) { // validação do ID do banco
                                             printf("%s", invalido);
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                            break;
+                                        }
+                                        else if (!NomeBanco(id)) {
+                                            printf("\nBanco não encontrado! Entre um dos IDs da lista.\n\n");
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
                                         printf("\n%s\n", NomeBanco(id));
@@ -186,6 +192,7 @@ int main() {
                                         gets(n);
                                         printf("\nEntre o sistema de amortização. [1] para SAC ou [2] para PRICE: ");
                                         if (!scanf("%d", &op) || op != 1 && op != 2) { // validação da opção de produto
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             printf("%s", invalido);
                                             break;
                                         }
@@ -193,10 +200,11 @@ int main() {
                                             printf("\nSAC\n");
                                         else
                                             printf("\nPRICE\n");
-                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         printf("\nEntre a porcentagem máxima de financiamento: ");
                                         if (!scanf("%f", &maxPorcentFinanc) || maxPorcentFinanc <= 0 || maxPorcentFinanc > 100) { // validação
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             printf("%s", invalido);
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
                                         printf("\n%.2f %%\n", maxPorcentFinanc);
@@ -204,6 +212,7 @@ int main() {
                                         printf("\nEntre a taxa percentual efetiva de juros: ");
                                         if (!scanf("%f", &taxaEfetivaJuros) || taxaEfetivaJuros < 0) { // validação
                                             printf("%s", invalido);
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
                                         printf("\n%.2f %%\n", taxaEfetivaJuros);
@@ -211,6 +220,7 @@ int main() {
                                         printf("\nEntre a porcentagem máxima de comprometimento da renda: ");
                                         if (!scanf("%f", &maxPorcentRenda) || maxPorcentRenda <= 0 || maxPorcentRenda > 100) { // validação
                                             printf("%s", invalido);
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
                                         printf("\n%.2f %%\n", maxPorcentRenda);
@@ -218,6 +228,7 @@ int main() {
                                         printf("\nEntre o número máximo de parcelas ou [0] para sair sem inserir produto: ");
                                         if (!scanf("%d", &prazoMax) || prazoMax < 0) { // validação
                                             printf("%s", invalido);
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
                                         if (prazoMax) {
@@ -244,7 +255,7 @@ int main() {
                         }
                         else {
                             printf("%s", invalido);
-                            while (getchar() != '\n');
+                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                         }
                     }
                     break;
