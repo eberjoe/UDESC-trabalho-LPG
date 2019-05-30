@@ -54,9 +54,10 @@ struct Produto {
 
 ### Dados para a Simulação
 A simulação de financiamento requererá os seguintes dados do contraente:
-* Renda - **```float```**
-* Valor total do bem a ser adquirido - **```float```**
-* Valor disponível para entrada - **```float```**
+* Renda -- **```float```**
+* Valor total do bem a ser adquirido -- **```float```**
+* Valor disponível para entrada -- **```float```**
+* Prazo total do financiamento em meses -- **```int```**
 
 O sistema deverá retornar as opções disponíveis de acordo com a base de dados, ou uma mensagem indicando que não há opções para os valores fornecidos. 
 
