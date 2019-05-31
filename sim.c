@@ -34,7 +34,7 @@ int InsereBanco(char[]);
 int ListaBancos(int);
 int RemoveBanco(int);
 int InsereProdutoParaBanco(char[], int, float, float, int, float);
-int ListaProdutos(int); // implementar
+int ListaProdutos(int);
 int RemoveProduto(int); // implementar
 int ListaProdPorBanco(int); // implementar
 int ListaProdPorTipo(int); // implementar
@@ -43,7 +43,6 @@ int ListaProdPorTipo(int); // implementar
 char* NomeBanco(int);
 char* NomeProduto(int);
 char* SistAm(int);
-int IdBanco(char[]); // implementar
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
@@ -246,10 +245,26 @@ int main() {
                                     }
                                     break;
                                 case 5:
-                                    printf("\nCADASTRO DE PRODUTOS > EDIÇÃO\n"); // COMPLETAR
+                                    printf("\nCADASTRO DE PRODUTOS > EDIÇÃO\n\n"); // COMPLETAR
                                     break;
                                 case 6:
-                                    printf("\nCADASTRO DE PRODUTOS > REMOÇÃO\n"); //COMPLETAR
+                                    printf("\nCADASTRO DE PRODUTOS > REMOÇÃO\n\n");
+                                    if (!ListaProdutos(0)) {
+                                        printf("Não há nenhum produto cadastrado para remover!\n\n");
+                                        break;
+                                    }
+                                    printf("\nEntre o ID do produto a ser removido: ");
+                                    if (scanf("%d", &id)) { // valida o ID como int
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        if (RemoveProduto(id))
+                                            printf("\n%s foi removido com sucesso!\n\n", NomeProduto(id));
+                                        else
+                                            printf("\nID não encontrado!\n\n");
+                                    }
+                                    else {
+                                        printf("%s", invalido);
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                    }
                                     break;
                                 case 7:
                                     sCp=1;
@@ -472,7 +487,24 @@ int ListaProdutos(int modo) {
 }
 
 int RemoveProduto(int idProduto){
-    return 0;
+    int i=0;
+    produtos=fopen("p.bin", "rb+");
+    fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+    while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+        if (leituraProduto.idProduto == idProduto && leituraProduto.disponivel) {
+            entradaProduto=leituraProduto;
+            entradaProduto.disponivel=0;
+            fseek(produtos, ftell(produtos)-sizeof(struct Produto), SEEK_SET); // retorna o cursor do arquivo para o início do registro a ser excluído
+            fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos);
+            if (fwrite != 0)
+                i++;
+            else
+                printf("\nErro ao remover produto!\n\n");
+            break;
+        }
+    }
+    fclose(produtos);
+    return i;
 }
 
 int ListaProdPorBanco(int idBanco) {
@@ -519,8 +551,4 @@ char* SistAm(int s) {
     if (s)
         return "PRICE";
     return "SAC";
-}
-
-int idBanco(char nome[]) {
-    return 0;
 }
