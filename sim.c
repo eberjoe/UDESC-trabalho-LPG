@@ -178,9 +178,9 @@ int main() {
                                 case 4:
                                     printf("\nCADASTRO DE PRODUTOS > INSERÇÃO\n\n");
                                     if (!ListaBancos(0))
-                                        printf("Não há bancos cadastrados! Cadastre pelo menos um banco antes de inserir um produto.\n\n");
+                                        printf("\nNão há bancos cadastrados! Cadastre pelo menos um banco antes de inserir um produto.\n\n");
                                     else {
-                                        printf("Entre o ID do banco que oferece o produto: ");
+                                        printf("\nEntre o ID do banco que oferece o produto: ");
                                         if (!scanf("%d", &id)) { // validação do ID do banco
                                             printf("%s", invalido);
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
@@ -455,10 +455,11 @@ int ListaProdutos(int modo) {
         }
         if (i) {
             if (modo) { // impressão na tela modo detalhado
-                for (j=0; j<i; j++)
-                    printf("ID:\t%d\nNome:\t%s\nBanco:\t%s\nSistema de amortização:\t%s\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao));
-                    printf("Taxa efetiva de juros:\t%.2f %%\nMáxima porcentagem de financiamento:\t%.2f %%\nPrazo máximo:\t%d meses\n", todosProdutos[j].taxaEfetivaJuros, todosProdutos[j].maxPorcentFinanc, todosProdutos[j].prazoMax);
-                    printf("Máximo comprometimento da renda:\t%.2f %%\n", todosProdutos[j].maxPorcentRenda);
+                for (j=0; j<i; j++) {
+                    printf("ID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao));
+                    printf("Juros:\t\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", todosProdutos[j].taxaEfetivaJuros, todosProdutos[j].maxPorcentFinanc, todosProdutos[j].prazoMax);
+                    printf("Máx. da renda:\t%.2f %%\n\n", todosProdutos[j].maxPorcentRenda);
+                }
             }
             else { // impressão na tela modo simples
                 printf("ID\t| Nome\n-----------------------\n");
