@@ -275,10 +275,10 @@ int main() {
 int InsereBanco(char nome[]) {
     int sobrescrita=0, i=0;
     if (bancos=fopen("b.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
-        fread(&id, sizeof(int), 1, bancos);
+        fread(&id, sizeof(int), 1, bancos); // lê o contador de ID
         id++;
         rewind(bancos);
-        fwrite(&id, sizeof(int), 1, bancos);
+        fwrite(&id, sizeof(int), 1, bancos); // sobrescreve o contador de ID
         fclose(bancos);
     }
     else {
@@ -291,7 +291,7 @@ int InsereBanco(char nome[]) {
     entradaBanco.idBanco=id;
     strcpy(entradaBanco.nome, nome);
     bancos=fopen("b.bin", "rb+");
-    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
     while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) { // percorre o arquivo
         if (!leituraBanco.disponivel) { // confere se há um registro excluído
             fseek(bancos, ftell(bancos)-sizeof(struct Banco), SEEK_SET); // retorna o cursor do arquivo para o início do registro excluído
@@ -317,7 +317,7 @@ int ListaBancos() {
     int i=0, j;
     struct Banco *todosBancos=NULL, h;
     if (bancos=fopen("b.bin", "rb")) { //confere se já existe um arquivo de bancos
-        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
         while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
             if (leituraBanco.disponivel) {
                 todosBancos=(struct Banco*) realloc(todosBancos, sizeof(struct Banco)*(i+1)); // realoca espaço no array de bancos a cada banco disponível encontrado
@@ -347,7 +347,7 @@ int ListaBancos() {
 int RemoveBanco(int idBanco) {
     int i=0;
     bancos=fopen("b.bin", "rb+");
-    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
     while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
         if (leituraBanco.idBanco == idBanco && leituraBanco.disponivel) {
             entradaBanco=leituraBanco;
@@ -363,7 +363,7 @@ int RemoveBanco(int idBanco) {
     }
     fclose(bancos);
     if (produtos=fopen("p.bin", "rb+")) { // confere se já existe um arquivo de produtos
-        fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+        fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
         while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
             if (leituraProduto.idBanco == idBanco && leituraProduto.disponivel) {
                 entradaProduto=leituraProduto;
@@ -378,7 +378,49 @@ int RemoveBanco(int idBanco) {
 }
 
 int InsereProdutoParaBanco(char nome[], int idBanco, float maxPorcentFinanc, float taxaEfetivaJuros, int prazoMax, float maxPorcentRenda) {
-    return 0;
+    int sobrescrita=0, i=0;
+    if (produtos=fopen("p.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
+        fread(&id, sizeof(int), 1, produtos); // lê o contador de ID
+        id++;
+        rewind(produtos);
+        fwrite(&id, sizeof(int), 1, produtos); // sobrescreve o contador de ID
+        fclose(produtos);
+    }
+    else {
+        id=1;
+        produtos=fopen("p.bin", "wb"); // cria um arquivo do zero
+        fwrite(&id, sizeof(int), 1, produtos);
+        fclose(produtos);
+    }
+    entradaProduto.disponivel=1;
+    entradaProduto.idBanco=id;
+    strcpy(entradaProduto.nome, nome);
+    entradaProduto.idBanco=idBanco;
+    entradaProduto.maxPorcentFinanc=maxPorcentFinanc;
+    entradaProduto.taxaEfetivaJuros=taxaEfetivaJuros;
+    entradaProduto.prazoMax=prazoMax;
+    entradaProduto.maxPorcentRenda=maxPorcentRenda;
+    produtos=fopen("p.bin", "rb+");
+    fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+    while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) { // percorre o arquivo
+        if (!leituraProduto.disponivel) { // confere se há um registro excluído
+            fseek(produtos, ftell(produtos)-sizeof(struct Produto), SEEK_SET); // retorna o cursor do arquivo para o início do registro excluído
+            fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos); //sobrescreve
+            if (fwrite != 0)
+                i++;
+            sobrescrita=1;
+            break;
+        }
+    }
+    fclose(produtos);
+    if (!sobrescrita) {
+        produtos=fopen("p.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
+        fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos);
+        if (fwrite != 0)
+            i++;
+        fclose(produtos);
+    }
+    return i;
 }
 
 int ListaProdutos() {
