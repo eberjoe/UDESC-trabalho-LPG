@@ -42,6 +42,7 @@ int ListaProdPorTipo(int); // implementar
 /* OUTROS PROTÓTIPOS */
 char* NomeBanco(int);
 char* NomeProduto(int);
+char* SistAm(int);
 int IdBanco(char[]); // implementar
 
 int main() {
@@ -146,7 +147,7 @@ int main() {
                             switch(op) {
                                 case 1:
                                     printf("\nCADASTRO DE PRODUTOS > LISTA\n\n");
-                                    if (!ListaProdutos(0))
+                                    if (!ListaProdutos(1))
                                         printf("Não há produtos cadastrados!\n\n");
                                     break;
                                 case 2:
@@ -200,10 +201,7 @@ int main() {
                                             printf("%s", invalido);
                                             break;
                                         }
-                                        if (op == 1)
-                                            printf("\nSAC\n");
-                                        else
-                                            printf("\nPRICE\n");
+                                        printf("\n%s\n", SistAm(op-1));
                                         printf("\nEntre a porcentagem máxima de financiamento: ");
                                         if (!scanf("%f", &maxPorcentFinanc) || maxPorcentFinanc <= 0 || maxPorcentFinanc > 100) { // validação
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
@@ -403,7 +401,7 @@ int InsereProdutoParaBanco(char nome[], int idBanco, float maxPorcentFinanc, flo
         fclose(produtos);
     }
     entradaProduto.disponivel=1;
-    entradaProduto.idBanco=id;
+    entradaProduto.idProduto=id;
     strcpy(entradaProduto.nome, nome);
     entradaProduto.idBanco=idBanco;
     entradaProduto.maxPorcentFinanc=maxPorcentFinanc;
@@ -434,7 +432,42 @@ int InsereProdutoParaBanco(char nome[], int idBanco, float maxPorcentFinanc, flo
 }
 
 int ListaProdutos(int modo) {
-    return 0;
+    int i=0, j;
+    struct Produto *todosProdutos=NULL, h;
+    if (produtos=fopen("p.bin", "rb")) { //confere se já existe um arquivo de produtos
+        fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+        while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+            if (leituraProduto.disponivel) {
+                todosProdutos=(struct Produto*) realloc(todosProdutos, sizeof(struct Produto)*(i+1)); // realoca espaço no array de produtos a cada produto disponível encontrado
+                todosProdutos[i]=leituraProduto;
+                i++;
+            }
+        }
+        fclose(produtos);
+        if (i > 1) { // ordena o array de produtos se este contiver mais de um produto
+            for (j=0; j<i-1; j++) {
+                if (todosProdutos[j].idProduto > todosProdutos[j+1].idProduto) {
+                    h=todosProdutos[j];
+                    todosProdutos[j]=todosProdutos[j+1];
+                    todosProdutos[j+1]=h;
+                }
+            }
+        }
+        if (i) {
+            if (modo) { // impressão na tela modo detalhado
+                for (j=0; j<i; j++)
+                    printf("ID:\t%d\nNome:\t%s\nBanco:\t%s\nSistema de amortização:\t%s\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao));
+                    printf("Taxa efetiva de juros:\t%.2f %%\nMáxima porcentagem de financiamento:\t%.2f %%\nPrazo máximo:\t%d meses\n", todosProdutos[j].taxaEfetivaJuros, todosProdutos[j].maxPorcentFinanc, todosProdutos[j].prazoMax);
+                    printf("Máximo comprometimento da renda:\t%.2f %%\n", todosProdutos[j].maxPorcentRenda);
+            }
+            else { // impressão na tela modo simples
+                printf("ID\t| Nome\n-----------------------\n");
+                for (j=0; j<i; j++)
+                    printf("%d\t| %s\n", todosProdutos[j].idProduto, todosProdutos[j].nome);
+            }
+        }
+    }
+    return i;
 }
 
 int RemoveProduto(int idProduto){
@@ -479,6 +512,12 @@ char* NomeProduto(int idProduto) {
         fclose(produtos);
     }
     return c;
+}
+
+char* SistAm(int s) {
+    if (s)
+        return "PRICE";
+    return "SAC";
 }
 
 int idBanco(char nome[]) {
