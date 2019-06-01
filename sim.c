@@ -2,7 +2,6 @@
 #include <locale.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
 #define MAXNOME 100
 
 /* ESTRUTURAS */
@@ -36,7 +35,7 @@ int ListaBancos(int);
 int RemoveBanco(int);
 int InsereProdutoParaBanco(char[], int, int, float, float, int, float);
 int ConsultaProdutos(int, int, int);
-int RemoveProduto(int); // implementar
+int RemoveProduto(int);
 
 /* OUTROS PROTÓTIPOS */
 char* NomeBanco(int);
@@ -145,6 +144,11 @@ int main() {
                             switch(op) {
                                 case 1:
                                     printf("\nCADASTRO DE PRODUTOS > CONSULTA\n\n");
+                                    if (!ConsultaProdutos(0, 0, 0)) {
+                                        printf("\nNão há produtos cadastrados!\n\n");
+                                        break;
+                                    }
+                                    printf("\n");
                                     if (!ListaBancos(0)) {
                                         printf("\nNão há sequer bancos cadastrados, quanto menos produtos...\n\n");
                                         break;
@@ -235,14 +239,30 @@ int main() {
                                         }
                                         else
                                             break;
-                                        if (InsereProdutoParaBanco(n, id, op-1, maxPorcentFinanc, taxaEfetivaJuros, prazoMax, maxPorcentRenda))
+                                        if (InsereProdutoParaBanco(n, id, op-1, maxPorcentFinanc/100, taxaEfetivaJuros/100, prazoMax, maxPorcentRenda/100))
                                             printf("\nProduto inserido com sucesso!\n\n");
                                         else
                                             printf("\nErro ao inserir!\n\n");
                                     }
                                     break;
                                 case 3:
-                                    printf("\nCADASTRO DE PRODUTOS > REMOÇÃO\n"); //COMPLETAR
+                                    printf("\nCADASTRO DE PRODUTOS > REMOÇÃO\n\n");
+                                    if (!ConsultaProdutos(0, 0, 0)) {
+                                        printf("Não há nenhum produto cadastrado para remover!\n\n");
+                                        break;
+                                    }
+                                    printf("\nEntre o ID do produto a ser removido: ");
+                                    if (scanf("%d", &id)) { // valida o ID como int
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        if (RemoveProduto(id))
+                                            printf("\n%s foi removido com sucesso!\n\n", NomeProduto(id));
+                                        else
+                                            printf("\nID não encontrado!\n\n");
+                                    }
+                                    else {
+                                        printf("%s", invalido);
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                    }
                                     break;
                                 case 4:
                                     sCp=1;
@@ -274,14 +294,13 @@ int InsereBanco(char nome[]) {
         id++;
         rewind(bancos);
         fwrite(&id, sizeof(int), 1, bancos); // sobrescreve o contador de ID
-        fclose(bancos);
     }
     else {
         id=1;
         bancos=fopen("b.bin", "wb"); // cria um arquivo do zero
         fwrite(&id, sizeof(int), 1, bancos);
-        fclose(bancos);
     }
+    fclose(bancos);
     entradaBanco.disponivel=1;
     entradaBanco.idBanco=id;
     strcpy(entradaBanco.nome, nome);
@@ -309,7 +328,7 @@ int InsereBanco(char nome[]) {
 }
 
 int ListaBancos(int modo) {
-    int i=0, j;
+    int i=0, j, k;
     struct Banco *todosBancos=NULL, h;
     if (bancos=fopen("b.bin", "rb")) { //confere se já existe um arquivo de bancos
         fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
@@ -320,13 +339,14 @@ int ListaBancos(int modo) {
                 i++;
             }
         }
-        fclose(bancos);
         if (i > 1) { // ordena o array de bancos se este contiver mais de um banco
             for (j=0; j<i-1; j++) {
-                if (todosBancos[j].idBanco > todosBancos[j+1].idBanco) {
-                    h=todosBancos[j];
-                    todosBancos[j]=todosBancos[j+1];
-                    todosBancos[j+1]=h;
+                for (k=j+1; k<i; k++) {
+                    if (todosBancos[j].idBanco > todosBancos[k].idBanco) {
+                        h=todosBancos[j];
+                        todosBancos[j]=todosBancos[k];
+                        todosBancos[k]=h;
+                    }
                 }
             }
         }
@@ -342,11 +362,12 @@ int ListaBancos(int modo) {
             }
         }
     }
+    fclose(bancos);
     return i;
 }
 
 int RemoveBanco(int idBanco) {
-    int i=0;
+    int i=0, c;
     bancos=fopen("b.bin", "rb+");
     fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
     while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
@@ -355,26 +376,27 @@ int RemoveBanco(int idBanco) {
             entradaBanco.disponivel=0;
             fseek(bancos, ftell(bancos)-sizeof(struct Banco), SEEK_SET); // retorna o cursor do arquivo para o início do registro a ser excluído
             fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos);
-            if (fwrite != 0)
-                i++;
-            else
-                printf("\nErro ao remover banco!\n\n");
+            i++;
             break;
         }
     }
     fclose(bancos);
     if (produtos=fopen("p.bin", "rb+")) { // confere se já existe um arquivo de produtos
+        fseek(produtos, 0, SEEK_END);
+        c=ftell(produtos);
+        rewind(produtos);
         fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
         while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
             if (leituraProduto.idBanco == idBanco && leituraProduto.disponivel) {
                 entradaProduto=leituraProduto;
                 entradaProduto.disponivel=0;
-                fseek(produtos, ftell(produtos)-sizeof(struct Produto), SEEK_SET); // retorna o cursor para o inicio do registro a ser excluído
+                fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para o inicio do registro a ser excluído
                 fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos);
+                fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para evitar expansão do arquivo na próxima iteração
             }
         }
-        fclose(produtos);
     }
+    fclose(produtos);
     return i;
 }
 
@@ -385,14 +407,13 @@ int InsereProdutoParaBanco(char nome[], int idBanco, int sist, float maxPorcentF
         id++;
         rewind(produtos);
         fwrite(&id, sizeof(int), 1, produtos); // sobrescreve o contador de ID
-        fclose(produtos);
     }
     else {
         id=1;
         produtos=fopen("p.bin", "wb"); // cria um arquivo do zero
         fwrite(&id, sizeof(int), 1, produtos);
-        fclose(produtos);
     }
+    fclose(produtos);
     entradaProduto.disponivel=1;
     entradaProduto.idProduto=id;
     strcpy(entradaProduto.nome, nome);
@@ -426,24 +447,25 @@ int InsereProdutoParaBanco(char nome[], int idBanco, int sist, float maxPorcentF
 }
 
 int ConsultaProdutos(int modo, int idBanco, int sist) {
-    int i=0, j;
+    int i=0, j, k;
     struct Produto *todosProdutos=NULL, h;
     if (produtos=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
         fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-        while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos) && leituraProduto.disponivel) {
-            if (!idBanco && !sist || leituraProduto.idBanco == idBanco && leituraProduto.sistAmortizacao == sist-1 || leituraProduto.idBanco == idBanco && !sist || leituraProduto.sistAmortizacao == sist-1 && !idBanco) {
+        while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+            if (leituraProduto.disponivel && (!idBanco && !sist || leituraProduto.idBanco == idBanco && leituraProduto.sistAmortizacao == sist-1 || leituraProduto.idBanco == idBanco && !sist || leituraProduto.sistAmortizacao == sist-1 && !idBanco)) {
                 todosProdutos=(struct Produto*) realloc(todosProdutos, sizeof(struct Produto)*(i+1)); // realoca espaço no array de produtos a cada produto disponível encontrado
                 todosProdutos[i]=leituraProduto;
                 i++;
             }
         }
-        fclose(produtos);
         if (i > 1) { // ordena o array de produtos se este contiver mais de um produto
             for (j=0; j<i-1; j++) {
-                if (todosProdutos[j].idProduto > todosProdutos[j+1].idProduto) {
-                    h=todosProdutos[j];
-                    todosProdutos[j]=todosProdutos[j+1];
-                    todosProdutos[j+1]=h;
+                for (k=j+1; k<i; k++) {
+                    if (todosProdutos[j].idProduto > todosProdutos[k].idProduto) {
+                        h=todosProdutos[j];
+                        todosProdutos[j]=todosProdutos[k];
+                        todosProdutos[k]=h;
+                    }
                 }
             }
         }
@@ -451,8 +473,8 @@ int ConsultaProdutos(int modo, int idBanco, int sist) {
             if (modo) { // impressão no modo detalhado
                 for (j=0; j<i; j++) {
                     printf("ID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao));
-                    printf("Juros:\t\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", todosProdutos[j].taxaEfetivaJuros, todosProdutos[j].maxPorcentFinanc, todosProdutos[j].prazoMax);
-                    printf("Máx. da renda:\t%.2f %%\n\n", todosProdutos[j].maxPorcentRenda);
+                    printf("Juros:\t\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", todosProdutos[j].taxaEfetivaJuros*100, todosProdutos[j].maxPorcentFinanc*100, todosProdutos[j].prazoMax);
+                    printf("Máx. da renda:\t%.2f %%\n\n", todosProdutos[j].maxPorcentRenda*100);
                 }
             }
             else { // impressão no modo resumido
@@ -462,11 +484,26 @@ int ConsultaProdutos(int modo, int idBanco, int sist) {
             }
         }
     }
+    fclose(produtos);
     return i;
 }
 
 int RemoveProduto(int idProduto){
-    return 0;
+    int i=0;
+    produtos=fopen("p.bin", "rb+");
+    fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+    while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+        if (leituraProduto.idProduto == idProduto && leituraProduto.disponivel) {
+            entradaProduto=leituraProduto;
+            entradaProduto.disponivel=0;
+            fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para o inicio do registro a ser excluído
+            fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos);
+            i++;
+            break;
+        }
+    }
+    fclose(produtos);
+    return i;
 }
 
 char* NomeBanco(int idBanco) {
@@ -480,8 +517,8 @@ char* NomeBanco(int idBanco) {
                 break;
             }
         }
-        fclose(bancos);
     }
+    fclose(bancos);
     return c;
 }
 
@@ -496,8 +533,8 @@ char* NomeProduto(int idProduto) {
                 break;
             }
         }
-        fclose(produtos);
     }
+    fclose(produtos);
     return c;
 }
 
