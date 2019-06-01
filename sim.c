@@ -2,6 +2,7 @@
 #include <locale.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #define MAXNOME 100
 
 /* ESTRUTURAS */
@@ -33,17 +34,14 @@ struct Produto leituraProduto, entradaProduto;
 int InsereBanco(char[]);
 int ListaBancos(int);
 int RemoveBanco(int);
-int InsereProdutoParaBanco(char[], int, float, float, int, float);
-int ListaProdutos(int); // implementar
+int InsereProdutoParaBanco(char[], int, int, float, float, int, float);
+int ConsultaProdutos(int modo, ...);
 int RemoveProduto(int); // implementar
-int ListaProdPorBanco(int); // implementar
-int ListaProdPorTipo(int); // implementar
 
 /* OUTROS PROTÓTIPOS */
 char* NomeBanco(int);
 char* NomeProduto(int);
 char* SistAm(int);
-int IdBanco(char[]); // implementar
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
@@ -140,42 +138,17 @@ int main() {
                 case 3:
                     while(!sCp) {
                         printf("\n### CADASTRO DE PRODUTOS ###\n");
-                        printf("[1] LISTA\n[2] CONSULTA POR BANCO\n[3] CONSULTA POR TIPO\n[4] INSERÇÃO\n[5] EDIÇÃO\n[6] REMOÇÃO\n[7] VOLTA\n");
+                        printf("[1] CONSULTA\n[2] INSERÇÃO\n[3] REMOÇÃO\n[4] VOLTA\n");
                         printf("Entre uma das opções acima: ");
-                        if (scanf("%d", &op) && op >= 1 && op <= 7) { // valida a opção do menu como int dentro do intervalo de opções
+                        if (scanf("%d", &op) && op >= 1 && op <= 4) { // valida a opção do menu como int dentro do intervalo de opções
                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                             switch(op) {
                                 case 1:
-                                    printf("\nCADASTRO DE PRODUTOS > LISTA\n\n");
-                                    if (!ListaProdutos(1))
+                                    printf("\nCADASTRO DE PRODUTOS > CONSULTA\n\n");
+                                    if (!ConsultaProdutos(1))
                                         printf("Não há produtos cadastrados!\n\n");
                                     break;
                                 case 2:
-                                    printf("\nCADASTRO DE PRODUTOS > CONSULTA POR BANCO\n\n");
-                                    printf("Entre o ID do banco: ");
-                                    if (scanf("%d", &id)) { // valida ID como int
-                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
-                                        if (!ListaProdPorBanco(id))
-                                            printf("\n\nBanco não encontrado!\n\n");
-                                    }
-                                    else {
-                                        printf("%s", invalido);
-                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
-                                    }
-                                    break;
-                                case 3:
-                                    printf("\nCADASTRO DE PRODUTOS > CONSULTA POR TIPO\n\n");
-                                    printf("Entre [1] para SAC ou [2] para PRICE: ");
-                                    if (scanf("%d", &op) && (op == 1 || op == 2)) { // valida opção como int entre 1 e 2
-                                        if (!ListaProdPorTipo(op))
-                                            printf("\n\nNão há produtos deste tipo!\n\n");
-                                    }
-                                    else {
-                                        printf("%s", invalido);
-                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
-                                    }
-                                    break;
-                                case 4:
                                     printf("\nCADASTRO DE PRODUTOS > INSERÇÃO\n\n");
                                     if (!ListaBancos(0))
                                         printf("\nNão há bancos cadastrados! Cadastre pelo menos um banco antes de inserir um produto.\n\n");
@@ -239,19 +212,16 @@ int main() {
                                         }
                                         else
                                             break;
-                                        if (InsereProdutoParaBanco(n, id, maxPorcentFinanc, taxaEfetivaJuros, prazoMax, maxPorcentRenda))
+                                        if (InsereProdutoParaBanco(n, id, op-1, maxPorcentFinanc, taxaEfetivaJuros, prazoMax, maxPorcentRenda))
                                             printf("\nProduto inserido com sucesso!\n\n");
                                         else
                                             printf("\nErro ao inserir!\n\n");
                                     }
                                     break;
-                                case 5:
-                                    printf("\nCADASTRO DE PRODUTOS > EDIÇÃO\n"); // COMPLETAR
-                                    break;
-                                case 6:
+                                case 3:
                                     printf("\nCADASTRO DE PRODUTOS > REMOÇÃO\n"); //COMPLETAR
                                     break;
-                                case 7:
+                                case 4:
                                     sCp=1;
                             }
                         }
@@ -385,7 +355,7 @@ int RemoveBanco(int idBanco) {
     return i;
 }
 
-int InsereProdutoParaBanco(char nome[], int idBanco, float maxPorcentFinanc, float taxaEfetivaJuros, int prazoMax, float maxPorcentRenda) {
+int InsereProdutoParaBanco(char nome[], int idBanco, int sist, float maxPorcentFinanc, float taxaEfetivaJuros, int prazoMax, float maxPorcentRenda) {
     int sobrescrita=0, i=0;
     if (produtos=fopen("p.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
         fread(&id, sizeof(int), 1, produtos); // lê o contador de ID
@@ -404,6 +374,7 @@ int InsereProdutoParaBanco(char nome[], int idBanco, float maxPorcentFinanc, flo
     entradaProduto.idProduto=id;
     strcpy(entradaProduto.nome, nome);
     entradaProduto.idBanco=idBanco;
+    entradaProduto.sistAmortizacao=sist;
     entradaProduto.maxPorcentFinanc=maxPorcentFinanc;
     entradaProduto.taxaEfetivaJuros=taxaEfetivaJuros;
     entradaProduto.prazoMax=prazoMax;
@@ -431,7 +402,7 @@ int InsereProdutoParaBanco(char nome[], int idBanco, float maxPorcentFinanc, flo
     return i;
 }
 
-int ListaProdutos(int modo) {
+int ConsultaProdutos(int modo, ...) {
     int i=0, j;
     struct Produto *todosProdutos=NULL, h;
     if (produtos=fopen("p.bin", "rb")) { //confere se já existe um arquivo de produtos
@@ -454,14 +425,14 @@ int ListaProdutos(int modo) {
             }
         }
         if (i) {
-            if (modo) { // impressão na tela modo detalhado
+            if (modo) { // impressão no modo detalhado
                 for (j=0; j<i; j++) {
                     printf("ID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao));
                     printf("Juros:\t\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", todosProdutos[j].taxaEfetivaJuros, todosProdutos[j].maxPorcentFinanc, todosProdutos[j].prazoMax);
                     printf("Máx. da renda:\t%.2f %%\n\n", todosProdutos[j].maxPorcentRenda);
                 }
             }
-            else { // impressão na tela modo simples
+            else { // impressão no modo resumido
                 printf("ID\t| Nome\n-----------------------\n");
                 for (j=0; j<i; j++)
                     printf("%d\t| %s\n", todosProdutos[j].idProduto, todosProdutos[j].nome);
@@ -472,14 +443,6 @@ int ListaProdutos(int modo) {
 }
 
 int RemoveProduto(int idProduto){
-    return 0;
-}
-
-int ListaProdPorBanco(int idBanco) {
-    return 0;
-}
-
-int ListaProdPorTipo(int tipo) {
     return 0;
 }
 
@@ -519,8 +482,4 @@ char* SistAm(int s) {
     if (s)
         return "PRICE";
     return "SAC";
-}
-
-int idBanco(char nome[]) {
-    return 0;
 }
