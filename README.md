@@ -87,3 +87,4 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 * Uso do valor de retorno da função **```fopen()```** no modo **```r```** para verificação da existência do arquivo.
 * Uso do valor de retorno da função **```scanf()```** para a validação da entrada de dados do usuário.
 * Uso de **```while (getchar() != '\n');```** para consumir retorno de linha em excesso da entrada do usuário.
+* Formatação de strings e números com ponto flutuante com a função **```printf()```**.
