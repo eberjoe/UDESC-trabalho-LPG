@@ -478,9 +478,9 @@ int ConsultaProdutos(int modo, int idBanco, int sist) {
                 }
             }
             else { // impressão no modo resumido
-                printf("ID\t| Nome do produto\n-----------------------\n");
+                printf("ID\t| Nome do produto     | Banco\n------------------------------------------\n");
                 for (j=0; j<i; j++)
-                    printf("%d\t| %s\n", todosProdutos[j].idProduto, todosProdutos[j].nome);
+                    printf("%d\t| %-20.20s| %s\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco));
             }
         }
     }
