@@ -35,7 +35,7 @@ int InsereBanco(char[]);
 int ListaBancos(int);
 int RemoveBanco(int);
 int InsereProdutoParaBanco(char[], int, int, float, float, int, float);
-int ConsultaProdutos(int modo, ...);
+int ConsultaProdutos(int, int, int);
 int RemoveProduto(int); // implementar
 
 /* OUTROS PROTÓTIPOS */
@@ -46,7 +46,7 @@ char* SistAm(int);
 int main() {
     setlocale(LC_ALL, "Portuguese");
     char n[MAXNOME], invalido[]="\nVou fingir que não vi isso!\n\n";
-    int op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax;
+    int op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax, filtroSist;
     float renda, valorBem, entrada, maxPorcentFinanc, taxaEfetivaJuros, maxPorcentRenda;
     while (!s) {
         sCb=0;
@@ -145,8 +145,31 @@ int main() {
                             switch(op) {
                                 case 1:
                                     printf("\nCADASTRO DE PRODUTOS > CONSULTA\n\n");
-                                    if (!ConsultaProdutos(1))
-                                        printf("Não há produtos cadastrados!\n\n");
+                                    if (!ListaBancos(0)) {
+                                        printf("\nNão há sequer bancos cadastrados, quanto menos produtos...\n\n");
+                                        break;
+                                    }
+                                    printf("\nConsulta simples [1] ou detalhada [2] ? ");
+                                    if (!scanf("%d", &op) || op != 1 && op != 2) { // validação
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        printf("%s", invalido);
+                                        break;
+                                    }
+                                    printf("\nEntre o ID do banco ou [0] para omitir filtro de banco: ");
+                                    if (!scanf("%d", &idBanco)) { // validação
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        printf("%s", invalido);
+                                        break;
+                                    }
+                                    printf("\nEntre [1] para SAC, [2] para PRICE, ou [0] para omitir este filtro: ");
+                                    if (!scanf("%d", &filtroSist) || filtroSist < 0 || filtroSist > 2) { // validação
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        printf("%s", invalido);
+                                        break;
+                                    }
+                                    printf("\n");
+                                    if (!ConsultaProdutos(op-1, idBanco, filtroSist))
+                                        printf("\nEsta consulta não gerou resultados!\n\n");
                                     break;
                                 case 2:
                                     printf("\nCADASTRO DE PRODUTOS > INSERÇÃO\n\n");
@@ -313,7 +336,7 @@ int ListaBancos(int modo) {
                     printf("ID:\t%d\nNome:\t%s\n\n", todosBancos[j].idBanco, todosBancos[j].nome);
             }
             else { // impressão na tela modo simples
-                printf("ID\t| Nome\n-----------------------\n");
+                printf("ID\t| Nome do banco\n-----------------------\n");
                 for (j=0; j<i; j++)
                     printf("%d\t| %s\n", todosBancos[j].idBanco, todosBancos[j].nome);
             }
@@ -402,13 +425,13 @@ int InsereProdutoParaBanco(char nome[], int idBanco, int sist, float maxPorcentF
     return i;
 }
 
-int ConsultaProdutos(int modo, ...) {
+int ConsultaProdutos(int modo, int idBanco, int sist) {
     int i=0, j;
     struct Produto *todosProdutos=NULL, h;
-    if (produtos=fopen("p.bin", "rb")) { //confere se já existe um arquivo de produtos
+    if (produtos=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
         fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-        while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
-            if (leituraProduto.disponivel) {
+        while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos) && leituraProduto.disponivel) {
+            if (!idBanco && !sist || leituraProduto.idBanco == idBanco && leituraProduto.sistAmortizacao == sist-1 || leituraProduto.idBanco == idBanco && !sist || leituraProduto.sistAmortizacao == sist-1 && !idBanco) {
                 todosProdutos=(struct Produto*) realloc(todosProdutos, sizeof(struct Produto)*(i+1)); // realoca espaço no array de produtos a cada produto disponível encontrado
                 todosProdutos[i]=leituraProduto;
                 i++;
@@ -433,7 +456,7 @@ int ConsultaProdutos(int modo, ...) {
                 }
             }
             else { // impressão no modo resumido
-                printf("ID\t| Nome\n-----------------------\n");
+                printf("ID\t| Nome do produto\n-----------------------\n");
                 for (j=0; j<i; j++)
                     printf("%d\t| %s\n", todosProdutos[j].idProduto, todosProdutos[j].nome);
             }
