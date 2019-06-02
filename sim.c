@@ -2,6 +2,7 @@
 #include <locale.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #define MAXNOME 100
 
 /* ESTRUTURAS */
@@ -41,11 +42,13 @@ int RemoveProduto(int);
 char* NomeBanco(int);
 char* NomeProduto(int);
 char* SistAm(int);
+struct Produto* SimPool(float, float, float, int);
+float* ParcelasSac(int, float, float);
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
     char n[MAXNOME], invalido[]="\nVou fingir que não vi isso!\n\n";
-    int op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax, filtroSist;
+    int i, op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax, filtroSist, prazo;
     float renda, valorBem, entrada, maxPorcentFinanc, taxaEfetivaJuros, maxPorcentRenda;
     while (!s) {
         sCb=0;
@@ -58,7 +61,7 @@ int main() {
             switch(op) {
                 case 1:
                     printf("\nSIMULAÇÃO\n\n");
-                    if (!ConsultaProdutos(0, 0, 0)) {
+                    if (!ConsultaProdutos(-1, 0, 0)) {
                         printf("\nNão há produtos financeiros cadastrados!");
                         break;
                     }
@@ -81,6 +84,21 @@ int main() {
                     printf("Entre o valor da entrada: ");
                     if (scanf("%f", &entrada) && entrada > 0 && entrada < valorBem) // valida o valor como float maior que zero e menor que o preço total
                         printf("R$ %.2f\n", entrada);
+                    else {
+                        printf("%s", invalido);
+                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                        break;
+                    }
+                    printf("Entre o número de parcelas: ");
+                    if (scanf("%d", &prazo) && prazo > 0) { // valida o número de parcelas como inteiro maior que zero
+                        if (SimPool(renda, valorBem, entrada, prazo)) {
+                            printf("\nTemos os seguintes planos para o seu caso:\n");
+                            for (i=0; i<=sizeof(SimPool(renda, valorBem, entrada, prazo))/sizeof(struct Produto); i++)
+                                printf("\nProduto %s do banco %s\n", SimPool(renda, valorBem, entrada, prazo)[i].nome, NomeBanco(SimPool(renda, valorBem, entrada, prazo)[i].idBanco));
+                        }
+                        else
+                            printf("\nAtualmente não dispomos de produtos que atendam as suas exigências.");
+                    }
                     else {
                         printf("%s", invalido);
                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
@@ -359,9 +377,11 @@ int ListaBancos(int modo) {
                     printf("ID:\t%d\nNome:\t%s\n\n", todosBancos[j].idBanco, todosBancos[j].nome);
             }
             else { // impressão na tela modo simples
-                printf("ID\t| Nome do banco\n-----------------------\n");
+                printf("--------------------------\n");
+                printf("| ID\t| Nome do banco  |\n|------------------------|\n");
                 for (j=0; j<i; j++)
-                    printf("%d\t| %s\n", todosBancos[j].idBanco, todosBancos[j].nome);
+                    printf("| %d\t| %-15.15s|\n", todosBancos[j].idBanco, todosBancos[j].nome);
+                printf("--------------------------\n");
             }
         }
     }
@@ -473,17 +493,19 @@ int ConsultaProdutos(int modo, int idBanco, int sist) {
             }
         }
         if (i) {
-            if (modo) { // impressão no modo detalhado
+            if (modo > 0) { // impressão no modo detalhado
                 for (j=0; j<i; j++) {
                     printf("ID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao));
                     printf("Juros:\t\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", todosProdutos[j].taxaEfetivaJuros*100, todosProdutos[j].maxPorcentFinanc*100, todosProdutos[j].prazoMax);
                     printf("Máx. da renda:\t%.2f %%\n\n", todosProdutos[j].maxPorcentRenda*100);
                 }
             }
-            else { // impressão no modo resumido
-                printf("ID\t| Nome do produto     | Banco\n------------------------------------------\n");
+            else if (!modo) { // impressão no modo resumido
+                printf("------------------------------------------------\n");
+                printf("| ID\t| Nome do produto     | Banco          |\n|----------------------------------------------|\n");
                 for (j=0; j<i; j++)
-                    printf("%d\t| %-20.20s| %s\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco));
+                    printf("| %d\t| %-20.20s| %-15.15s|\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco));
+                printf("------------------------------------------------\n");
             }
         }
     }
@@ -545,4 +567,40 @@ char* SistAm(int s) {
     if (s)
         return "PRICE";
     return "SAC";
+}
+
+struct Produto* SimPool(float renda, float valor, float entrada, int prazo) {
+    int i=0;
+    float compRenda, rPrice=(valor-entrada)*pow(1+leituraProduto.taxaEfetivaJuros, prazo)*leituraProduto.taxaEfetivaJuros/(pow(1+leituraProduto.taxaEfetivaJuros, prazo)-1);
+    struct Produto* pool=NULL;
+    produtos=fopen("p.bin", "rb");
+    fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+    while (fread(&leituraProduto, sizeof(struct Produto), 1,  produtos)) {
+        compRenda=leituraProduto.maxPorcentRenda*renda;
+        if (leituraProduto.disponivel && leituraProduto.prazoMax >= prazo && leituraProduto.maxPorcentFinanc >= 1-entrada/valor) {
+            if (!leituraProduto.sistAmortizacao) {
+                if ((valor-entrada)*leituraProduto.taxaEfetivaJuros+(valor-entrada)/prazo <= compRenda) {
+                    pool=(struct Produto*) realloc(pool, sizeof(struct Produto)*(i+1));
+                    pool[i]=leituraProduto;
+                    i++;
+                }
+            }
+            else if (rPrice <= compRenda) {
+                pool=(struct Produto*) realloc(pool, sizeof(struct Produto)*(i+1));
+                pool[i]=leituraProduto;
+                i++;
+            }
+        }
+    }
+    fclose(produtos);
+    return pool;
+}
+
+float* ParcelasSac(int n, float p, float i) {
+    int j;
+    float a=p/n, *parcelas;
+    parcelas=(float*) malloc(n*sizeof(float));
+    for (j=1; j>=n; j++)
+        parcelas[j-1]=p*i*(1-(j-1)/n)+a;
+    return parcelas;
 }
