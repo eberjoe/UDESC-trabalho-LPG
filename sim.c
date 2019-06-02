@@ -29,6 +29,7 @@ FILE *bancos, *produtos;
 int id;
 struct Banco leituraBanco, entradaBanco;
 struct Produto leituraProduto, entradaProduto;
+struct Produto* pool;
 
 /* PROTÓTIPOS DAS FUNÇÕES CRUD */
 int InsereBanco(char[]);
@@ -42,14 +43,15 @@ int RemoveProduto(int);
 char* NomeBanco(int);
 char* NomeProduto(int);
 char* SistAm(int);
-struct Produto* SimPool(float, float, float, int);
+int SimPool(float, float, float, int);
 float* ParcelasSac(int, float, float);
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
     char n[MAXNOME], invalido[]="\nVou fingir que não vi isso!\n\n";
-    int i, op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax, filtroSist, prazo;
+    int i, op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax, filtroSist, prazo, tamPool;
     float renda, valorBem, entrada, maxPorcentFinanc, taxaEfetivaJuros, maxPorcentRenda;
+    pool=NULL;
     while (!s) {
         sCb=0;
         sCp=0;
@@ -60,9 +62,9 @@ int main() {
             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
             switch(op) {
                 case 1:
-                    printf("\nSIMULAÇÃO\n\n");
+                    printf("\n### SIMULAÇÃO ###\n");
                     if (!ConsultaProdutos(-1, 0, 0)) {
-                        printf("\nNão há produtos financeiros cadastrados!");
+                        printf("\nNão há produtos financeiros cadastrados!\n");
                         break;
                     }
                     printf("\nEntre o valor da renda bruta mensal do contraente: ");
@@ -91,13 +93,13 @@ int main() {
                     }
                     printf("Entre o número de parcelas: ");
                     if (scanf("%d", &prazo) && prazo > 0) { // valida o número de parcelas como inteiro maior que zero
-                        if (SimPool(renda, valorBem, entrada, prazo)) {
+                        if (tamPool=SimPool(renda, valorBem, entrada, prazo)) {
                             printf("\nTemos os seguintes planos para o seu caso:\n");
-                            for (i=0; i<=sizeof(SimPool(renda, valorBem, entrada, prazo))/sizeof(struct Produto); i++)
-                                printf("\nProduto %s do banco %s\n", SimPool(renda, valorBem, entrada, prazo)[i].nome, NomeBanco(SimPool(renda, valorBem, entrada, prazo)[i].idBanco));
+                            for (i=0; i<tamPool; i++)
+                                printf("\nFinanciamento %s do banco %s", pool[i].nome, NomeBanco(pool[i].idBanco));
                         }
                         else
-                            printf("\nAtualmente não dispomos de produtos que atendam as suas exigências.");
+                            printf("\nAtualmente não dispomos de planos de financiamento que atendam as suas exigências.");
                     }
                     else {
                         printf("%s", invalido);
@@ -569,10 +571,9 @@ char* SistAm(int s) {
     return "SAC";
 }
 
-struct Produto* SimPool(float renda, float valor, float entrada, int prazo) {
+int SimPool(float renda, float valor, float entrada, int prazo) {
     int i=0;
     float compRenda, rPrice=(valor-entrada)*pow(1+leituraProduto.taxaEfetivaJuros, prazo)*leituraProduto.taxaEfetivaJuros/(pow(1+leituraProduto.taxaEfetivaJuros, prazo)-1);
-    struct Produto* pool=NULL;
     produtos=fopen("p.bin", "rb");
     fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
     while (fread(&leituraProduto, sizeof(struct Produto), 1,  produtos)) {
@@ -593,7 +594,7 @@ struct Produto* SimPool(float renda, float valor, float entrada, int prazo) {
         }
     }
     fclose(produtos);
-    return pool;
+    return i;
 }
 
 float* ParcelasSac(int n, float p, float i) {
