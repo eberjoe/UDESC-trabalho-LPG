@@ -116,8 +116,35 @@ int main() {
                             switch(op) {
                                 case 1:
                                     printf("\nCADASTRO DE BANCOS > LISTA\n\n");
-                                    if (!ListaBancos(1))
+                                    if (!ListaBancos(1)) {
                                         printf("\nNão há bancos cadastrados!\n\n");
+                                        break;
+                                    }
+                                    printf("\nEntre o ID de um banco para editá-lo, ou qualquer outro valor para voltar: ");
+                                    if (scanf("%d", &id) && id >0) {
+                                        while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                        if (!NomeBanco(id) || !leituraBanco.disponivel) {
+                                            printf("\nID não encontrado!\n");
+                                            break;
+                                        }
+                                        printf("\nEntre o novo nome para %s: ", NomeBanco(id));
+                                        gets(n);
+                                        entradaBanco=leituraBanco;
+                                        strcpy(entradaBanco.nome, n);
+                                        bancos=fopen("b.bin", "rb+");
+                                        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+                                        while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
+                                            if (leituraBanco.idBanco == entradaBanco.idBanco) {
+                                                fseek(bancos, -sizeof(struct Banco), SEEK_CUR);
+                                                fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos);
+                                                break;
+                                            }
+                                        }
+                                        fclose(bancos);
+                                        break;
+                                    }
+                                    printf("%s", invalido);
+                                    while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                     break;
                                 case 2:
                                     printf("\nCADASTRO DE BANCOS > INSERÇÃO\n\n");
@@ -168,13 +195,13 @@ int main() {
                             switch(op) {
                                 case 1:
                                     printf("\nCADASTRO DE PRODUTOS > CONSULTA\n\n");
-                                    if (!ConsultaProdutos(0, 0, 0)) {
-                                        printf("\nNão há produtos cadastrados!\n\n");
+                                    if (!ListaBancos(0)) {
+                                        printf("Não há sequer bancos cadastrados, quanto menos produtos...\n\n");
                                         break;
                                     }
                                     printf("\n");
-                                    if (!ListaBancos(0)) {
-                                        printf("\nNão há sequer bancos cadastrados, quanto menos produtos...\n\n");
+                                    if (!ConsultaProdutos(0, 0, 0)) {
+                                        printf("Não há produtos cadastrados!\n\n");
                                         break;
                                     }
                                     printf("\nConsulta simples [1] ou detalhada [2] ? ");
