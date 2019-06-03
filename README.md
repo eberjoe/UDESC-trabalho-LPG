@@ -98,5 +98,7 @@ Discorrer sobre a expectativa do projeto como descrita acima.
 ### 2. Mapa dos Menus e Funcionalidades
 Mostrar um esquema gráfico e explicar os caminhos de menu.
 
+![Mapa de menus](menumap.png)
+
 ### 3. Demonstração Prática da Aplicação
 Demonstrar as funcionalidades primeiro sem nenhuma base de dados, e depois utilizando uma base pré-elaborada para a demonstração de simulações de financiamento. Focar nas técnicas de validação de dados e na regra de exclusão de registros.
