@@ -90,6 +90,10 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 * Formatação de strings e números com ponto flutuante com a função **```printf()```**.
 * Utilização das bibliotecas **```locale.h```** e **```math.h```**.
 
+### Ferramentas Utilizadas
+* Visual Studio Code e CodeBlocks para a edição do código.
+* GNU GCC e Microsot Visual C++ para a compilação do código.
+
 ## Proposta de Roteiro de Apresentação
 
 ### 1. Objetivo do Projeto
