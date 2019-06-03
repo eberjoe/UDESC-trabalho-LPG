@@ -252,7 +252,7 @@ int main() {
                                                     break;
                                                 case 3:
                                                     printf("\nEntre a nova taxa mensal de juros: ");
-                                                    if (scanf("%f", &taxaEfetivaJuros && taxaEfetivaJuros >= 0)) {
+                                                    if (scanf("%f", &taxaEfetivaJuros) && taxaEfetivaJuros >= 0) {
                                                         entradaProduto.taxaEfetivaJuros=taxaEfetivaJuros/100;
                                                         break;
                                                     }
@@ -486,11 +486,11 @@ int ListaBancos(int modo) {
                     printf("ID:\t%d\nNome:\t%s\n\n", todosBancos[j].idBanco, todosBancos[j].nome);
             }
             else { // impressão na tela modo simples
-                printf("--------------------------\n");
-                printf("| ID\t| Nome do banco  |\n|------------------------|\n");
+                printf("-------------------------------\n");
+                printf("| ID\t| Nome do banco       |\n|-----------------------------|\n");
                 for (j=0; j<i; j++)
-                    printf("| %d\t| %-15.15s|\n", todosBancos[j].idBanco, todosBancos[j].nome);
-                printf("--------------------------\n");
+                    printf("| %d\t| %-20.20s|\n", todosBancos[j].idBanco, todosBancos[j].nome);
+                printf("-------------------------------\n");
             }
         }
     }
@@ -610,11 +610,11 @@ int ConsultaProdutos(int modo, int idBanco, int sist) {
                 }
             }
             else if (!modo) { // impressão no modo resumido
-                printf("------------------------------------------------\n");
-                printf("| ID\t| Nome do produto     | Banco          |\n|----------------------------------------------|\n");
+                printf("------------------------------------------------------------------------------------\n");
+                printf("| ID\t| Nome do produto          | Banco               | Amort.    | Taxa %% a.m. |\n|----------------------------------------------------------------------------------|\n");
                 for (j=0; j<i; j++)
-                    printf("| %d\t| %-20.20s| %-15.15s|\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco));
-                printf("------------------------------------------------\n");
+                    printf("| %d\t| %-25.25s| %-20.20s| %-10.10s| %-12.2f|\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao), todosProdutos[j].taxaEfetivaJuros*100);
+                printf("------------------------------------------------------------------------------------\n");
             }
         }
     }
