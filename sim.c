@@ -24,12 +24,20 @@ struct Produto {
     float maxPorcentRenda; // número entre 0 e 1 indicando o máximo comprometimento da renda permitido
 };
 
+struct Financiamento {
+    int idProduto;
+    int idBanco;
+    int sistAmortizacao;
+    int prazo;
+    float primeiraParcela;
+    float ultimaParcela;
+};
+
 /* GLOBAIS (EXCETO ATORES, JORNALISTAS E APRESENTADORES) */
 FILE *bancos, *produtos;
-int id;
+int id, tamPoolFin;
 struct Banco leituraBanco, entradaBanco;
 struct Produto leituraProduto, entradaProduto;
-struct Produto* poolDeProdutos;
 
 /* PROTÓTIPOS DAS FUNÇÕES CRUD */
 int InsereBanco(char[]);
@@ -43,15 +51,15 @@ int RemoveProduto(int);
 char* NomeBanco(int);
 char* NomeProduto(int);
 char* SistAm(int);
-int Prospecta(float, float, float, int);
+struct Financiamento Prospecta(float, float, float, int);
 float* ParcelasSac(int, float, float);
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
     char n[MAXNOME], invalido[]="\nVou fingir que não vi isso!\n\n";
-    int i, op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax, filtroSist, prazo, tampoolDeProdutos;
-    float renda, valorBem, entrada, maxPorcentFinanc, taxaEfetivaJuros, maxPorcentRenda;
-    poolDeProdutos=NULL;
+    int i, op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax, filtroSist, prazo;
+    float renda, valorBem, entrada, maxPorcentFinanc, taxaEfetivaJuros, maxPorcentRenda, parc1, parc2;
+    struct Financiamento* poolFin;
     while (!s) {
         sCb=0;
         sCp=0;
@@ -93,10 +101,13 @@ int main() {
                     }
                     printf("Entre o número de parcelas: ");
                     if (scanf("%d", &prazo) && prazo > 0) { // valida o número de parcelas como inteiro maior que zero
-                        if (tampoolDeProdutos=Prospecta(renda, valorBem, entrada, prazo)) {
+                        if (poolFin=Prospecta(renda, valorBem, entrada, prazo)) {
+                            realloc(poolFin, tamPoolFin*sizeof(struct Financiamento));
                             printf("\nTemos os seguintes planos para o seu caso:\n");
-                            for (i=0; i<tampoolDeProdutos; i++)
-                                printf("\nFinanciamento %s do banco %s", poolDeProdutos[i].nome, NomeBanco(poolDeProdutos[i].idBanco));
+                            for (i=0; i<tamPoolFin; i++) {
+                                printf("\nFinanciamento %s do banco %s, no sistema de amortização %s, em %d vezes.\n", NomeProduto(poolFin[i].idProduto), NomeBanco(poolFin[i].idBanco), SistAm(poolFin[i].sistAmortizacao));
+                                printf("Com a primeira parcela no valor de R$ %.2f, e última no valor de R$ %.2f.\n", poolFin[i].primeiraParcela, poolFin[i].ultimaParcela);
+                            }
                         }
                         else
                             printf("\nAtualmente não dispomos de planos de financiamento que atendam as suas exigências.");
@@ -240,6 +251,7 @@ int main() {
                                         printf("\nEntre [1] para editar o nome, [2] para sistema, [3] para juros, [4] para máximo percentual financiável, [5] para prazo máximo ou [6] para máximo comprometimento de renda: ");
                                         if (scanf("%d", &op) && op >= 1 && op <= 6) {
                                             entradaProduto=leituraProduto;
+                                            while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             switch (op) {
                                                 case 1:
                                                     printf("\nEntre o novo nome: ");
@@ -678,8 +690,9 @@ char* SistAm(int s) {
     return "SAC";
 }
 
-int Prospecta(float renda, float valor, float entrada, int prazo) {
-    int i=0;
+struct Financiamento Prospecta(float renda, float valor, float entrada, int prazo) {
+    tamPoolFin=0;
+    struct Financiamento* pool=NULL;
     float compRenda, rPrice=(valor-entrada)*pow(1+leituraProduto.taxaEfetivaJuros, prazo)*leituraProduto.taxaEfetivaJuros/(pow(1+leituraProduto.taxaEfetivaJuros, prazo)-1);
     produtos=fopen("p.bin", "rb");
     fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
@@ -688,20 +701,31 @@ int Prospecta(float renda, float valor, float entrada, int prazo) {
         if (leituraProduto.disponivel && leituraProduto.prazoMax >= prazo && leituraProduto.maxPorcentFinanc >= 1-entrada/valor) {
             if (!leituraProduto.sistAmortizacao) {
                 if ((valor-entrada)*leituraProduto.taxaEfetivaJuros+(valor-entrada)/prazo <= compRenda) {
-                    poolDeProdutos=(struct Produto*) realloc(poolDeProdutos, sizeof(struct Produto)*(i+1));
-                    poolDeProdutos[i]=leituraProduto;
-                    i++;
+                    pool=(struct Financiamento*) realloc(pool, sizeof(struct Financiamento)*(tamPoolFin+1));
+                    pool[tamPoolFin].idProduto=leituraProduto.idProduto;
+                    pool[tamPoolFin].idBanco=leituraProduto.idBanco;
+                    pool[tamPoolFin].sistAmortizacao=leituraProduto.sistAmortizacao;
+                    pool[tamPoolFin].prazo=prazo;
+                    pool[tamPoolFin].primeiraParcela=(valor-entrada)*leituraProduto.taxaEfetivaJuros+(valor-entrada)/prazo;
+                    pool[tamPoolFin].ultimaParcela=(valor-entrada)*leituraProduto.taxaEfetivaJuros*(1-((prazo-1)/prazo)+(valor-entrada))/prazo;
+                    tamPoolFin++;
                 }
             }
             else if (rPrice <= compRenda) {
-                poolDeProdutos=(struct Produto*) realloc(poolDeProdutos, sizeof(struct Produto)*(i+1));
+                poolDeProdutos=(struct Produto*) realloc(poolDeProdutos, sizeof(struct Produto)*(tamPoolFin+1));
                 poolDeProdutos[i]=leituraProduto;
-                i++;
+                pool[tamPoolFin].idProduto=leituraProduto.idProduto;
+                pool[tamPoolFin].idBanco=leituraProduto.idBanco;
+                pool[tamPoolFin].sistAmortizacao=leituraProduto.sistAmortizacao;
+                pool[tamPoolFin].prazo=prazo;
+                pool[tamPoolFin].primeiraParcela=rPrice;
+                pool[tamPoolFin].ultimaParcela=rPrice;
+                tamPoolFin++;
             }
         }
     }
     fclose(produtos);
-    return i;
+    return pool;
 }
 
 float* ParcelasSac(int n, float p, float i) {
