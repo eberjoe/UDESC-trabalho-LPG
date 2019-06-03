@@ -298,7 +298,7 @@ int main() {
                                             }
                                             fclose(bancos);
                                             printf("ID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", entradaProduto.idProduto, entradaProduto.nome, NomeBanco(entradaProduto.idBanco), SistAm(entradaProduto.sistAmortizacao));
-                                            printf("Juros:\t\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", entradaProduto.taxaEfetivaJuros*100, entradaProduto.maxPorcentFinanc*100, entradaProduto.prazoMax);
+                                            printf("Juros a.m.:\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", entradaProduto.taxaEfetivaJuros*100, entradaProduto.maxPorcentFinanc*100, entradaProduto.prazoMax);
                                             printf("Máx. da renda:\t%.2f %%\n\n", entradaProduto.maxPorcentRenda*100);
                                             break;
                                         }
@@ -605,7 +605,7 @@ int ConsultaProdutos(int modo, int idBanco, int sist) {
             if (modo > 0) { // impressão no modo detalhado
                 for (j=0; j<i; j++) {
                     printf("ID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao));
-                    printf("Juros:\t\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", todosProdutos[j].taxaEfetivaJuros*100, todosProdutos[j].maxPorcentFinanc*100, todosProdutos[j].prazoMax);
+                    printf("Juros a.m.:\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", todosProdutos[j].taxaEfetivaJuros*100, todosProdutos[j].maxPorcentFinanc*100, todosProdutos[j].prazoMax);
                     printf("Máx. da renda:\t%.2f %%\n\n", todosProdutos[j].maxPorcentRenda*100);
                 }
             }
