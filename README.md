@@ -23,7 +23,7 @@ Cronograma:
 |Apresentação e organização|1,0|
 |Presença (durante o mês de junho e principalmente na apresentação final)|1,0|
 
-## Cadastro de Bancos com seus Produtos Financeiros e Simulação de Financiamento
+## Proposta: Cadastro de Bancos com seus Produtos Financeiros para Simulação de Financiamento
 
 ### Introdução
 O sistema permitirá o cadastro, a consulta e a remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá ao usuário efetuar simulações de financiamento, apresentando na tela a progressão da amortização.
@@ -89,3 +89,14 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 * Uso de **```while (getchar() != '\n');```** para consumir retorno de linha em excesso da entrada do usuário.
 * Formatação de strings e números com ponto flutuante com a função **```printf()```**.
 * Utilização das bibliotecas **```locale.h```** e **```math.h```**.
+
+## Proposta de Roteiro de Apresentação
+
+### 1. Objetivo do Projeto
+Discorrer sobre a expectativa do projeto como descrita acima.
+
+### 2. Mapa dos Menus e Funcionalidades
+Mostrar um esquema gráfico e explicar os caminhos de menu.
+
+### 3. Demonstração Prática da Aplicação
+Demonstrar as funcionalidades primeiro sem nenhuma base de dados, e depois utilizando uma base pré-elaborada para a demonstração de simulações de financiamento. Focar nas técnicas de validação de dados e na regra de exclusão de registros.
