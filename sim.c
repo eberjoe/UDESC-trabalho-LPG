@@ -240,14 +240,14 @@ int main() {
                                     printf("\nEntre o ID de um produto para editá-lo, ou qualquer outro valor para voltar: ");
                                     if (scanf("%d", &id) && id > 0) {
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
-                                        if (!NomeProduto(id) || !leituraProduto.disponivel) {
+                                        if (!NomeProduto(id) || !leituraProduto.disponivel) { // valida a existência e a disponibilidade do produto
                                             printf("\nID não encontrado!\n");
                                             break;
                                         }
-                                        printf("ID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", leituraProduto.idProduto, leituraProduto.nome, NomeBanco(leituraProduto.idBanco), SistAm(leituraProduto.sistAmortizacao));
+                                        printf("\nID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", leituraProduto.idProduto, leituraProduto.nome, NomeBanco(leituraProduto.idBanco), SistAm(leituraProduto.sistAmortizacao));
                                         printf("Juros:\t\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", leituraProduto.taxaEfetivaJuros*100, leituraProduto.maxPorcentFinanc*100, leituraProduto.prazoMax);
                                         printf("Máx. da renda:\t%.2f %%\n\n", leituraProduto.maxPorcentRenda*100);
-                                        printf("\nEntre [1] para editar o nome, [2] para sistema, [3] para juros, [4] para máximo percentual financiável, [5] para prazo máximo ou [6] para máximo comprometimento de renda: ");
+                                        printf("\nEntre\n[1] para editar o nome,\n[2] para editar o sistema de amortização,\n[3] para editar a taxa de juros,\n[4] para editar o máximo percentual financiável,\n[5] para editar o prazo máximo,\n[6] para editar o percentual máximo de comprometimento da renda, ou\n[0] para sair da edição\n> ");
                                         if (scanf("%d", &op) && op >= 1 && op <= 6) {
                                             entradaProduto=leituraProduto;
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
@@ -308,7 +308,7 @@ int main() {
                                                 }
                                             }
                                             fclose(bancos);
-                                            printf("ID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", entradaProduto.idProduto, entradaProduto.nome, NomeBanco(entradaProduto.idBanco), SistAm(entradaProduto.sistAmortizacao));
+                                            printf("\nID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", entradaProduto.idProduto, entradaProduto.nome, NomeBanco(entradaProduto.idBanco), SistAm(entradaProduto.sistAmortizacao));
                                             printf("Juros a.m.:\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", entradaProduto.taxaEfetivaJuros*100, entradaProduto.maxPorcentFinanc*100, entradaProduto.prazoMax);
                                             printf("Máx. da renda:\t%.2f %%\n\n", entradaProduto.maxPorcentRenda*100);
                                             break;
@@ -699,7 +699,7 @@ int Prospecta(float renda, float valor, float entrada, int prazo) {
         compRenda=leituraProduto.maxPorcentRenda*renda;
         if (leituraProduto.disponivel && leituraProduto.prazoMax >= prazo && leituraProduto.maxPorcentFinanc >= 1-entrada/valor) {
             if (!leituraProduto.sistAmortizacao) {
-                if ((valor-entrada)*leituraProduto.taxaEfetivaJuros+(valor-entrada)/(float)prazo <= compRenda) {
+                if ((valor-entrada)*leituraProduto.taxaEfetivaJuros+(valor-entrada)/prazo <= compRenda) {
                     poolFin=(struct Financiamento*) realloc(poolFin, sizeof(struct Financiamento)*(i+1));
                     poolFin[i].idProduto=leituraProduto.idProduto;
                     poolFin[i].idBanco=leituraProduto.idBanco;
