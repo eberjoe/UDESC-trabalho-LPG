@@ -89,6 +89,7 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 * Uso de **```while (getchar() != '\n');```** para consumir retorno de linha em excesso da entrada do usuário.
 * Formatação de strings e números com ponto flutuante com a função **```printf()```**.
 * Utilização das bibliotecas **```locale.h```** e **```math.h```**.
+* *Cast* de tipo **```int```** para **```float```** no cálculo do quociente.
 
 ### Ferramentas Utilizadas
 * Visual Studio Code e CodeBlocks para a edição do código.
