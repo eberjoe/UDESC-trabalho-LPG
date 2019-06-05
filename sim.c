@@ -37,29 +37,31 @@ struct Financiamento {
 /* GLOBAIS (EXCETO ATORES, JORNALISTAS E APRESENTADORES) */
 FILE *bancos, *produtos;
 int id;
-struct Banco leituraBanco, entradaBanco;
-struct Produto leituraProduto, entradaProduto;
+struct Banco leituraBanco;
+struct Produto leituraProduto;
 struct Financiamento *poolFin;
 
 /* PROTÓTIPOS DAS FUNÇÕES CRUD */
-int InsereBanco(char[]);
+int InsereBanco(struct Banco);
 int ListaBancos(int);
 int RemoveBanco(int);
-int InsereProdutoParaBanco(char[], int, int, float, float, int, float);
+int InsereProdutoParaBanco(struct Produto);
 int ConsultaProdutos(int, int, int);
 int RemoveProduto(int);
 
 /* OUTROS PROTÓTIPOS */
 char* NomeBanco(int);
 char* NomeProduto(int);
-char* SistAm(int);
 int Prospecta(float, float, float, int);
+char* SistAm(int);
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
-    char n[MAXNOME], invalido[]="\nVou fingir que não vi isso!\n\n";
-    int i, op, s=0, sCb, sCp, idBanco, sistAmortizacao, prazoMax, filtroSist, prazo, tamPoolFin;
-    float renda, valorBem, entrada, maxPorcentFinanc, taxaEfetivaJuros, maxPorcentRenda;
+    char invalido[]="\nVou fingir que não vi isso!\n\n";
+    int i, op, s=0, sCb, sCp, filtroIdBanco, filtroSist, prazo, tamPoolFin;
+    float renda, valorBem, entrada;
+    struct Banco entradaBanco;
+    struct Produto entradaProduto;
     while (!s) {
         sCb=0;
         sCp=0;
@@ -130,7 +132,7 @@ int main() {
                                         printf("\nNão há bancos cadastrados!\n\n");
                                         break;
                                     }
-                                    printf("\nEntre o ID de um banco para editá-lo, ou qualquer outro valor para voltar: ");
+                                    printf("\nEntre o ID de um banco para editá-lo, ou [0] para voltar: ");
                                     if (scanf("%d", &id) && id > 0) {
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         if (!NomeBanco(id) || !leituraBanco.disponivel) {
@@ -138,9 +140,7 @@ int main() {
                                             break;
                                         }
                                         printf("\nEntre o novo nome para %s: ", NomeBanco(id));
-                                        gets(n);
-                                        entradaBanco=leituraBanco;
-                                        strcpy(entradaBanco.nome, n);
+                                        gets(entradaBanco.nome);
                                         bancos=fopen("b.bin", "rb+");
                                         fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
                                         while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
@@ -159,8 +159,8 @@ int main() {
                                 case 2:
                                     printf("\nCADASTRO DE BANCOS > INSERÇÃO\n\n");
                                     printf("Entre o nome do novo banco: ");
-                                    gets(n);
-                                    if (InsereBanco(n))
+                                    gets(entradaBanco.nome);
+                                    if (InsereBanco(entradaBanco))
                                         printf("\nBanco inserido com sucesso!\n\n");
                                     else
                                         printf("\nErro ao inserir!\n\n");
@@ -221,7 +221,7 @@ int main() {
                                         break;
                                     }
                                     printf("Entre o ID do banco ou [0] para omitir filtro de banco: ");
-                                    if (!scanf("%d", &idBanco)) { // validação
+                                    if (!scanf("%d", &filtroIdBanco)) { // validação
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         printf("%s", invalido);
                                         break;
@@ -233,11 +233,11 @@ int main() {
                                         break;
                                     }
                                     printf("\n");
-                                    if (!ConsultaProdutos(op-1, idBanco, filtroSist)) {
+                                    if (!ConsultaProdutos(op-1, filtroIdBanco, filtroSist)) {
                                         printf("\nEsta consulta não gerou resultados!\n\n");
                                         break;
                                     }
-                                    printf("\nEntre o ID de um produto para editá-lo, ou qualquer outro valor para voltar: ");
+                                    printf("\nEntre o ID de um produto para editá-lo, ou [0] para voltar: ");
                                     if (scanf("%d", &id) && id > 0) {
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         if (!NomeProduto(id) || !leituraProduto.disponivel) { // valida a existência e a disponibilidade do produto
@@ -254,17 +254,16 @@ int main() {
                                             switch (op) {
                                                 case 1:
                                                     printf("\nEntre o novo nome: ");
-                                                    gets(n);
-                                                    strcpy(entradaProduto.nome, n);
+                                                    gets(entradaProduto.nome);
                                                     break;
                                                 case 2:
-                                                    printf("\nO sistema foi mudado para %s", SistAm(!leituraProduto.sistAmortizacao));
+                                                    printf("\nO sistema foi mudado para %s\n", SistAm(!leituraProduto.sistAmortizacao));
                                                     entradaProduto.sistAmortizacao=!leituraProduto.sistAmortizacao;
                                                     break;
                                                 case 3:
                                                     printf("\nEntre a nova taxa mensal de juros: ");
-                                                    if (scanf("%f", &taxaEfetivaJuros) && taxaEfetivaJuros >= 0) {
-                                                        entradaProduto.taxaEfetivaJuros=taxaEfetivaJuros/100;
+                                                    if (scanf("%f", &entradaProduto.taxaEfetivaJuros) && entradaProduto.taxaEfetivaJuros >= 0) {
+                                                        entradaProduto.taxaEfetivaJuros/=100;
                                                         break;
                                                     }
                                                     while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
@@ -272,8 +271,8 @@ int main() {
                                                     break;
                                                 case 4:
                                                     printf("\nEntre o novo percentual financiável: ");
-                                                    if (scanf("%f", &maxPorcentFinanc) && maxPorcentFinanc > 0) {
-                                                        entradaProduto.maxPorcentFinanc=maxPorcentFinanc/100;
+                                                    if (scanf("%f", &entradaProduto.maxPorcentFinanc) && entradaProduto.maxPorcentFinanc > 0) {
+                                                        entradaProduto.maxPorcentFinanc/=100;
                                                         break;
                                                     }
                                                     while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
@@ -281,17 +280,15 @@ int main() {
                                                     break;
                                                 case 5:
                                                     printf("\nEntre o novo prazo máximo de financiamento: ");
-                                                    if (scanf("%d", &prazoMax) && prazoMax >0) {
-                                                        entradaProduto.prazoMax=prazoMax;
+                                                    if (scanf("%d", &entradaProduto.prazoMax) && entradaProduto.prazoMax >0)
                                                         break;
-                                                    }
                                                     while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                                     printf("%s", invalido);
                                                     break;
                                                 case 6:
                                                     printf("\nEntre o novo percentual máximo de comprometimento da renda: ");
-                                                    if (scanf("%f", &maxPorcentRenda) && maxPorcentRenda >= 0 && maxPorcentRenda <= 100) {
-                                                        entradaProduto.maxPorcentRenda=maxPorcentRenda/100;
+                                                    if (scanf("%f", &entradaProduto.maxPorcentRenda) && entradaProduto.maxPorcentRenda >= 0 && entradaProduto.maxPorcentRenda <= 100) {
+                                                        entradaProduto.maxPorcentRenda/=100;
                                                         break;
                                                     }
                                                     while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
@@ -323,20 +320,20 @@ int main() {
                                         printf("\nNão há bancos cadastrados! Cadastre pelo menos um banco antes de inserir um produto.\n\n");
                                     else {
                                         printf("\nEntre o ID do banco que oferece o produto: ");
-                                        if (!scanf("%d", &id)) { // validação do ID do banco
+                                        if (!scanf("%d", &entradaProduto.idBanco)) { // validação do ID do banco
                                             printf("%s", invalido);
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
-                                        else if (!NomeBanco(id)) {
+                                        else if (!NomeBanco(entradaProduto.idBanco)) {
                                             printf("\nBanco não encontrado! Entre um dos IDs da lista.\n\n");
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
-                                        printf("%s\n", NomeBanco(id));
+                                        printf("%s\n", NomeBanco(entradaProduto.idBanco));
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         printf("Entre o nome do produto: ");
-                                        gets(n);
+                                        gets(entradaProduto.nome);
                                         printf("\nEntre o sistema de amortização. [1] para SAC ou [2] para PRICE: ");
                                         if (!scanf("%d", &op) || op != 1 && op != 2) { // validação da opção de produto
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
@@ -344,43 +341,47 @@ int main() {
                                             break;
                                         }
                                         printf("%s\n", SistAm(op-1));
+                                        entradaProduto.sistAmortizacao=op-1;
                                         printf("Entre a porcentagem máxima de financiamento: ");
-                                        if (!scanf("%f", &maxPorcentFinanc) || maxPorcentFinanc <= 0 || maxPorcentFinanc > 100) { // validação
+                                        if (!scanf("%f", &entradaProduto.maxPorcentFinanc) || entradaProduto.maxPorcentFinanc <= 0 || entradaProduto.maxPorcentFinanc > 100) { // validação
                                             printf("%s", invalido);
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
-                                        printf("%.2f %%\n", maxPorcentFinanc);
+                                        printf("%.2f %%\n", entradaProduto.maxPorcentFinanc);
+                                        entradaProduto.maxPorcentFinanc/=100;
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         printf("Entre a taxa percentual efetiva de juros: ");
-                                        if (!scanf("%f", &taxaEfetivaJuros) || taxaEfetivaJuros < 0) { // validação
+                                        if (!scanf("%f", &entradaProduto.taxaEfetivaJuros) || entradaProduto.taxaEfetivaJuros < 0) { // validação
                                             printf("%s", invalido);
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
-                                        printf("%.2f %%\n", taxaEfetivaJuros);
+                                        printf("%.2f %%\n", entradaProduto.taxaEfetivaJuros);
+                                        entradaProduto.taxaEfetivaJuros/=100;
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         printf("Entre a porcentagem máxima de comprometimento da renda: ");
-                                        if (!scanf("%f", &maxPorcentRenda) || maxPorcentRenda <= 0 || maxPorcentRenda > 100) { // validação
+                                        if (!scanf("%f", &entradaProduto.maxPorcentRenda) || entradaProduto.maxPorcentRenda <= 0 || entradaProduto.maxPorcentRenda > 100) { // validação
                                             printf("%s", invalido);
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
-                                        printf("%.2f %%\n", maxPorcentRenda);
+                                        printf("%.2f %%\n", entradaProduto.maxPorcentRenda);
+                                        entradaProduto.maxPorcentRenda/=100;
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         printf("Entre o número máximo de parcelas ou [0] para sair sem inserir produto: ");
-                                        if (!scanf("%d", &prazoMax) || prazoMax < 0) { // validação
+                                        if (!scanf("%d", &entradaProduto.prazoMax) || entradaProduto.prazoMax < 0) { // validação
                                             printf("%s", invalido);
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                             break;
                                         }
-                                        if (prazoMax) {
-                                            printf("%d meses\n", prazoMax);
+                                        if (entradaProduto.prazoMax) {
+                                            printf("%d meses\n", entradaProduto.prazoMax);
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         }
                                         else
                                             break;
-                                        if (InsereProdutoParaBanco(n, id, op-1, maxPorcentFinanc/100, taxaEfetivaJuros/100, prazoMax, maxPorcentRenda/100))
+                                        if (InsereProdutoParaBanco(entradaProduto))
                                             printf("\nProduto inserido com sucesso!\n\n");
                                         else
                                             printf("\nErro ao inserir!\n\n");
@@ -428,7 +429,7 @@ int main() {
     return 0;
 }
 
-int InsereBanco(char nome[]) {
+int InsereBanco(struct Banco banco) {
     int sobrescrita=0, i=0;
     if (bancos=fopen("b.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
         fread(&id, sizeof(int), 1, bancos); // lê o contador de ID
@@ -442,15 +443,14 @@ int InsereBanco(char nome[]) {
         fwrite(&id, sizeof(int), 1, bancos);
     }
     fclose(bancos);
-    entradaBanco.disponivel=1;
-    entradaBanco.idBanco=id;
-    strcpy(entradaBanco.nome, nome);
+    banco.disponivel=1;
+    banco.idBanco=id;
     bancos=fopen("b.bin", "rb+");
     fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
     while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) { // percorre o arquivo
         if (!leituraBanco.disponivel) { // confere se há um registro excluído
-            fseek(bancos, ftell(bancos)-sizeof(struct Banco), SEEK_SET); // retorna o cursor do arquivo para o início do registro excluído
-            fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos); //sobrescreve
+            fseek(bancos, -sizeof(struct Banco), SEEK_CUR); // retorna o cursor do arquivo para o início do registro excluído
+            fwrite(&banco, sizeof(struct Banco), 1, bancos); //sobrescreve
             if (fwrite != 0)
                 i++;
             sobrescrita=1;
@@ -460,7 +460,7 @@ int InsereBanco(char nome[]) {
     fclose(bancos);
     if (!sobrescrita) {
         bancos=fopen("b.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
-        fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos);
+        fwrite(&banco, sizeof(struct Banco), 1, bancos);
         if (fwrite != 0)
             i++;
         fclose(bancos);
@@ -515,10 +515,9 @@ int RemoveBanco(int idBanco) {
     fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
     while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
         if (leituraBanco.idBanco == idBanco && leituraBanco.disponivel) {
-            entradaBanco=leituraBanco;
-            entradaBanco.disponivel=0;
+            leituraBanco.disponivel=0;
             fseek(bancos, -sizeof(struct Banco), SEEK_CUR); // retorna o cursor do arquivo para o início do registro a ser excluído
-            fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos);
+            fwrite(&leituraBanco, sizeof(struct Banco), 1, bancos);
             i++;
             break;
         }
@@ -531,10 +530,9 @@ int RemoveBanco(int idBanco) {
         fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
         while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
             if (leituraProduto.idBanco == idBanco && leituraProduto.disponivel) {
-                entradaProduto=leituraProduto;
-                entradaProduto.disponivel=0;
+                leituraProduto.disponivel=0;
                 fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para o inicio do registro a ser excluído
-                fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos);
+                fwrite(&leituraProduto, sizeof(struct Produto), 1, produtos);
                 fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para evitar expansão do arquivo na próxima iteração
             }
         }
@@ -543,7 +541,7 @@ int RemoveBanco(int idBanco) {
     return i;
 }
 
-int InsereProdutoParaBanco(char nome[], int idBanco, int sist, float maxPorcentFinanc, float taxaEfetivaJuros, int prazoMax, float maxPorcentRenda) {
+int InsereProdutoParaBanco(struct Produto produto) {
     int sobrescrita=0, i=0;
     if (produtos=fopen("p.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
         fread(&id, sizeof(int), 1, produtos); // lê o contador de ID
@@ -557,21 +555,14 @@ int InsereProdutoParaBanco(char nome[], int idBanco, int sist, float maxPorcentF
         fwrite(&id, sizeof(int), 1, produtos);
     }
     fclose(produtos);
-    entradaProduto.disponivel=1;
-    entradaProduto.idProduto=id;
-    strcpy(entradaProduto.nome, nome);
-    entradaProduto.idBanco=idBanco;
-    entradaProduto.sistAmortizacao=sist;
-    entradaProduto.maxPorcentFinanc=maxPorcentFinanc;
-    entradaProduto.taxaEfetivaJuros=taxaEfetivaJuros;
-    entradaProduto.prazoMax=prazoMax;
-    entradaProduto.maxPorcentRenda=maxPorcentRenda;
+    produto.disponivel=1;
+    produto.idProduto=id;
     produtos=fopen("p.bin", "rb+");
     fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
     while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) { // percorre o arquivo
         if (!leituraProduto.disponivel) { // confere se há um registro excluído
-            fseek(produtos, ftell(produtos)-sizeof(struct Produto), SEEK_SET); // retorna o cursor do arquivo para o início do registro excluído
-            fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos); //sobrescreve
+            fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor do arquivo para o início do registro excluído
+            fwrite(&produto, sizeof(struct Produto), 1, produtos); //sobrescreve
             if (fwrite != 0)
                 i++;
             sobrescrita=1;
@@ -581,7 +572,7 @@ int InsereProdutoParaBanco(char nome[], int idBanco, int sist, float maxPorcentF
     fclose(produtos);
     if (!sobrescrita) {
         produtos=fopen("p.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
-        fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos);
+        fwrite(&produto, sizeof(struct Produto), 1, produtos);
         if (fwrite != 0)
             i++;
         fclose(produtos);
@@ -639,10 +630,9 @@ int RemoveProduto(int idProduto){
     fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
     while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
         if (leituraProduto.idProduto == idProduto && leituraProduto.disponivel) {
-            entradaProduto=leituraProduto;
-            entradaProduto.disponivel=0;
+            leituraProduto.disponivel=0;
             fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para o inicio do registro a ser excluído
-            fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos);
+            fwrite(&leituraProduto, sizeof(struct Produto), 1, produtos);
             i++;
             break;
         }
@@ -683,12 +673,6 @@ char* NomeProduto(int idProduto) {
     return c;
 }
 
-char* SistAm(int s) {
-    if (s)
-        return "PRICE";
-    return "SAC";
-}
-
 int Prospecta(float renda, float valor, float entrada, int prazo) {
     int i=0;
     poolFin=NULL;
@@ -726,4 +710,10 @@ int Prospecta(float renda, float valor, float entrada, int prazo) {
     }
     fclose(produtos);
     return i;
+}
+
+char* SistAm(int s) {
+    if (s)
+        return "PRICE";
+    return "SAC";
 }
