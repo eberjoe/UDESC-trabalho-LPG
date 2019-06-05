@@ -42,18 +42,18 @@ struct Produto leituraProduto;
 struct Financiamento *poolFin;
 
 /* PROTÓTIPOS DAS FUNÇÕES CRUD */
-int InsereBanco(struct Banco);
-int ListaBancos(int);
-int RemoveBanco(int);
-int InsereProdutoParaBanco(struct Produto);
-int ConsultaProdutos(int, int, int);
-int RemoveProduto(int);
+int InsereBanco(struct Banco); // retorna êxito da inserção
+int ListaBancos(int /*0: lista em tabela; 1: lista elegante*/); //retorna número de registros de bancos
+int RemoveBanco(int /*ID do banco*/); // retorna êxito da remoção
+int InsereProdutoParaBanco(struct Produto); // retorna êxito da inserção
+int ConsultaProdutos(int /*negativo: sem impressão; 0: impressão simples; 1: impressão detalhada)*/, int /*ID*/, int /*filtro de banco*/, int /*filtro de sistema amort.*/); // retorna número de resultados
+int RemoveProduto(int /*ID do produto*/); // retorna êxito da remoção
 
 /* OUTROS PROTÓTIPOS */
-char* NomeBanco(int);
-char* NomeProduto(int);
-int Prospecta(float, float, float, int);
-char* SistAm(int);
+char* NomeBanco(int); // retorna nome do banco em função do ID
+char* NomeProduto(int); // retorna nome do produto em função do ID
+int Prospecta(float /*renda*/, float /*valor do bem*/, float /*entrada*/, int /*prazo em meses*/); //popula poolFin com planos compatíveis com o perfil do cliente
+char* SistAm(int); //retorna "SAC" para 0 ou "PRICE" para 1
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
@@ -450,8 +450,7 @@ int InsereBanco(struct Banco banco) {
     while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) { // percorre o arquivo
         if (!leituraBanco.disponivel) { // confere se há um registro excluído
             fseek(bancos, -sizeof(struct Banco), SEEK_CUR); // retorna o cursor do arquivo para o início do registro excluído
-            fwrite(&banco, sizeof(struct Banco), 1, bancos); //sobrescreve
-            if (fwrite != 0)
+            if (fwrite(&banco, sizeof(struct Banco), 1, bancos)) //sobrescreve
                 i++;
             sobrescrita=1;
             break;
@@ -460,8 +459,7 @@ int InsereBanco(struct Banco banco) {
     fclose(bancos);
     if (!sobrescrita) {
         bancos=fopen("b.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
-        fwrite(&banco, sizeof(struct Banco), 1, bancos);
-        if (fwrite != 0)
+        if (fwrite(&banco, sizeof(struct Banco), 1, bancos))
             i++;
         fclose(bancos);
     }
@@ -517,13 +515,13 @@ int RemoveBanco(int idBanco) {
         if (leituraBanco.idBanco == idBanco && leituraBanco.disponivel) {
             leituraBanco.disponivel=0;
             fseek(bancos, -sizeof(struct Banco), SEEK_CUR); // retorna o cursor do arquivo para o início do registro a ser excluído
-            fwrite(&leituraBanco, sizeof(struct Banco), 1, bancos);
-            i++;
+            if (fwrite(&leituraBanco, sizeof(struct Banco), 1, bancos))
+                i++;
             break;
         }
     }
     fclose(bancos);
-    if (produtos=fopen("p.bin", "rb+")) { // confere se já existe um arquivo de produtos
+    if (produtos=fopen("p.bin", "rb+") && i) { // confere se já existe um arquivo de produtos
         fseek(produtos, 0, SEEK_END);
         c=ftell(produtos);
         rewind(produtos);
@@ -562,8 +560,7 @@ int InsereProdutoParaBanco(struct Produto produto) {
     while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) { // percorre o arquivo
         if (!leituraProduto.disponivel) { // confere se há um registro excluído
             fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor do arquivo para o início do registro excluído
-            fwrite(&produto, sizeof(struct Produto), 1, produtos); //sobrescreve
-            if (fwrite != 0)
+            if (fwrite(&produto, sizeof(struct Produto), 1, produtos)) //sobrescreve
                 i++;
             sobrescrita=1;
             break;
@@ -572,15 +569,14 @@ int InsereProdutoParaBanco(struct Produto produto) {
     fclose(produtos);
     if (!sobrescrita) {
         produtos=fopen("p.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
-        fwrite(&produto, sizeof(struct Produto), 1, produtos);
-        if (fwrite != 0)
+        if (fwrite(&produto, sizeof(struct Produto), 1, produtos))
             i++;
         fclose(produtos);
     }
     return i;
 }
 
-int ConsultaProdutos(int modo, int idBanco, int sist) {
+int ConsultaProdutos(int modo, int id, ...) {
     int i=0, j, k;
     struct Produto *todosProdutos=NULL, h;
     if (produtos=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
@@ -632,8 +628,8 @@ int RemoveProduto(int idProduto){
         if (leituraProduto.idProduto == idProduto && leituraProduto.disponivel) {
             leituraProduto.disponivel=0;
             fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para o inicio do registro a ser excluído
-            fwrite(&leituraProduto, sizeof(struct Produto), 1, produtos);
-            i++;
+            if (fwrite(&leituraProduto, sizeof(struct Produto), 1, produtos))
+                i++;
             break;
         }
     }
