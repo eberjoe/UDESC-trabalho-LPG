@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdarg.h>
 #define MAXNOME 100
 
 /* ESTRUTURAS */
@@ -46,7 +47,7 @@ int InsereBanco(struct Banco); // retorna êxito da inserção
 int ListaBancos(int /*0: lista em tabela; 1: lista elegante*/); //retorna número de registros de bancos
 int RemoveBanco(int /*ID do banco*/); // retorna êxito da remoção
 int InsereProdutoParaBanco(struct Produto); // retorna êxito da inserção
-int ConsultaProdutos(int /*negativo: sem impressão; 0: impressão simples; 1: impressão detalhada)*/, int /*ID*/, int /*filtro de banco*/, int /*filtro de sistema amort.*/); // retorna número de resultados
+int ConsultaProdutos(int /*negativo: sem impressão; 0: impressão simples; 1: impressão detalhada)*/, int /*ID*/, .../* opcionais int filtro de banco e int filtro de sistema de amort.*/); // retorna número de resultados
 int RemoveProduto(int /*ID do produto*/); // retorna êxito da remoção
 
 /* OUTROS PROTÓTIPOS */
@@ -73,7 +74,7 @@ int main() {
             switch(op) {
                 case 1:
                     printf("\n### SIMULAÇÃO ###\n");
-                    if (!ConsultaProdutos(-1, 0, 0)) {
+                    if (!ConsultaProdutos(-1, 0)) {
                         printf("\nNão há produtos financeiros cadastrados!\n");
                         break;
                     }
@@ -210,7 +211,7 @@ int main() {
                                         break;
                                     }
                                     printf("\n");
-                                    if (!ConsultaProdutos(0, 0, 0)) {
+                                    if (!ConsultaProdutos(0, 0)) {
                                         printf("Não há produtos cadastrados!\n\n");
                                         break;
                                     }
@@ -233,24 +234,21 @@ int main() {
                                         break;
                                     }
                                     printf("\n");
-                                    if (!ConsultaProdutos(op-1, filtroIdBanco, filtroSist)) {
+                                    if (!ConsultaProdutos(op-1, 0, filtroIdBanco, filtroSist)) { // executa a consulta com filtros
                                         printf("\nEsta consulta não gerou resultados!\n\n");
                                         break;
                                     }
                                     printf("\nEntre o ID de um produto para editá-lo, ou [0] para voltar: ");
                                     if (scanf("%d", &id) && id > 0) {
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
-                                        if (!NomeProduto(id) || !leituraProduto.disponivel) { // valida a existência e a disponibilidade do produto
+                                        if (!ConsultaProdutos(1,id)) { // valida a existência e a disponibilidade do produto, imprimindo seus dados detalhados em caso positivo
                                             printf("\nID não encontrado!\n");
                                             break;
                                         }
-                                        printf("\nID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", leituraProduto.idProduto, leituraProduto.nome, NomeBanco(leituraProduto.idBanco), SistAm(leituraProduto.sistAmortizacao));
-                                        printf("Juros:\t\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", leituraProduto.taxaEfetivaJuros*100, leituraProduto.maxPorcentFinanc*100, leituraProduto.prazoMax);
-                                        printf("Máx. da renda:\t%.2f %%\n\n", leituraProduto.maxPorcentRenda*100);
                                         printf("\nEntre\n[1] para editar o nome,\n[2] para editar o sistema de amortização,\n[3] para editar a taxa de juros,\n[4] para editar o máximo percentual financiável,\n[5] para editar o prazo máximo,\n[6] para editar o percentual máximo de comprometimento da renda, ou\n[0] para sair da edição\n> ");
                                         if (scanf("%d", &op) && op >= 1 && op <= 6) {
-                                            entradaProduto=leituraProduto;
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
+                                            entradaProduto=leituraProduto;
                                             switch (op) {
                                                 case 1:
                                                     printf("\nEntre o novo nome: ");
@@ -305,9 +303,7 @@ int main() {
                                                 }
                                             }
                                             fclose(bancos);
-                                            printf("\nID:\t\t%d\nNome:\t\t%s\nBanco:\t\t%s\nSistema:\t%s\n", entradaProduto.idProduto, entradaProduto.nome, NomeBanco(entradaProduto.idBanco), SistAm(entradaProduto.sistAmortizacao));
-                                            printf("Juros a.m.:\t%.2f %%\nMáx. fin.:\t%.2f %%\nPrazo máximo:\t%d meses\n", entradaProduto.taxaEfetivaJuros*100, entradaProduto.maxPorcentFinanc*100, entradaProduto.prazoMax);
-                                            printf("Máx. da renda:\t%.2f %%\n\n", entradaProduto.maxPorcentRenda*100);
+                                            ConsultaProdutos(1, entradaProduto.idProduto);
                                             break;
                                         }
                                     }
@@ -389,7 +385,7 @@ int main() {
                                     break;
                                 case 3:
                                     printf("\nCADASTRO DE PRODUTOS > REMOÇÃO\n\n");
-                                    if (!ConsultaProdutos(0, 0, 0)) {
+                                    if (!ConsultaProdutos(0, 0)) {
                                         printf("Não há nenhum produto cadastrado para remover!\n\n");
                                         break;
                                     }
@@ -521,7 +517,7 @@ int RemoveBanco(int idBanco) {
         }
     }
     fclose(bancos);
-    if (produtos=fopen("p.bin", "rb+") && i) { // confere se já existe um arquivo de produtos
+    if ((produtos=fopen("p.bin", "rb+")) && i) { // confere se já existe um arquivo de produtos
         fseek(produtos, 0, SEEK_END);
         c=ftell(produtos);
         rewind(produtos);
@@ -576,19 +572,32 @@ int InsereProdutoParaBanco(struct Produto produto) {
     return i;
 }
 
-int ConsultaProdutos(int modo, int id, ...) {
-    int i=0, j, k;
+int ConsultaProdutos(int modo, int idProduto, ...) {
+    int i=0, j, k, idBanco, sistema;
     struct Produto *todosProdutos=NULL, h;
+    va_list intArgumentPointer;
+    va_start(intArgumentPointer, idProduto);
+    if (!idProduto) {
+        idBanco=va_arg(intArgumentPointer, int);
+        sistema=va_arg(intArgumentPointer, int);
+    }
+    else {
+        idBanco=0;
+        sistema=0;
+    }
+    va_end(intArgumentPointer);
     if (produtos=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
         fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
         while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
-            if (leituraProduto.disponivel && (!idBanco && !sist || leituraProduto.idBanco == idBanco && leituraProduto.sistAmortizacao == sist-1 || leituraProduto.idBanco == idBanco && !sist || leituraProduto.sistAmortizacao == sist-1 && !idBanco)) {
+            if (leituraProduto.disponivel && ((!idBanco || leituraProduto.idBanco == idBanco) && (!sistema || leituraProduto.sistAmortizacao == sistema-1) /*&& (!idProduto || leituraProduto.idProduto == idProduto)*/)) {
                 todosProdutos=(struct Produto*) realloc(todosProdutos, sizeof(struct Produto)*(i+1)); // realoca espaço no array de produtos a cada produto disponível encontrado
                 todosProdutos[i]=leituraProduto;
                 i++;
+                if (idProduto)
+                    break;
             }
         }
-        if (i > 1) { // ordena o array de produtos se este contiver mais de um produto
+        if (i > 1) { // ordena o array de produtos para impressão se este contiver mais de um produto
             for (j=0; j<i-1; j++) {
                 for (k=j+1; k<i; k++) {
                     if (todosProdutos[j].idProduto > todosProdutos[k].idProduto) {
