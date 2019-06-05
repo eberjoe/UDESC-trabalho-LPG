@@ -47,7 +47,7 @@ int InsereBanco(struct Banco); // retorna êxito da inserção
 int ListaBancos(int /*0: lista em tabela; 1: lista elegante*/); //retorna número de registros de bancos
 int RemoveBanco(int /*ID do banco*/); // retorna êxito da remoção
 int InsereProdutoParaBanco(struct Produto); // retorna êxito da inserção
-int ConsultaProdutos(int /*negativo: sem impressão; 0: impressão simples; 1: impressão detalhada)*/, int /*ID*/, .../* opcionais int filtro de banco e int filtro de sistema de amort.*/); // retorna número de resultados
+int ConsultaProdutos(int /*modo -- negativo: sem impressão; 0: impressão simples; 1: impressão detalhada)*/, int /*ID (se zero, os próximos parâmetros são mandatórios)*/, .../* opcionais int filtro de banco e int filtro de sistema de amort.*/); // retorna número de resultados
 int RemoveProduto(int /*ID do produto*/); // retorna êxito da remoção
 
 /* OUTROS PROTÓTIPOS */
@@ -74,7 +74,7 @@ int main() {
             switch(op) {
                 case 1:
                     printf("\n### SIMULAÇÃO ###\n");
-                    if (!ConsultaProdutos(-1, 0)) {
+                    if (!ConsultaProdutos(-1, 0, 0, 0)) {
                         printf("\nNão há produtos financeiros cadastrados!\n");
                         break;
                     }
@@ -211,7 +211,7 @@ int main() {
                                         break;
                                     }
                                     printf("\n");
-                                    if (!ConsultaProdutos(0, 0)) {
+                                    if (!ConsultaProdutos(0, 0, 0, 0)) {
                                         printf("Não há produtos cadastrados!\n\n");
                                         break;
                                     }
@@ -297,7 +297,7 @@ int main() {
                                             fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
                                             while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
                                                 if (leituraProduto.idProduto == entradaProduto.idProduto) {
-                                                    fseek(produtos, -sizeof(struct Produto), SEEK_CUR);
+                                                    fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor do arquivo para o início do registro a ser editado
                                                     fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos);
                                                     break;
                                                 }
@@ -385,7 +385,7 @@ int main() {
                                     break;
                                 case 3:
                                     printf("\nCADASTRO DE PRODUTOS > REMOÇÃO\n\n");
-                                    if (!ConsultaProdutos(0, 0)) {
+                                    if (!ConsultaProdutos(0, 0, 0, 0)) {
                                         printf("Não há nenhum produto cadastrado para remover!\n\n");
                                         break;
                                     }
@@ -573,7 +573,7 @@ int InsereProdutoParaBanco(struct Produto produto) {
 }
 
 int ConsultaProdutos(int modo, int idProduto, ...) {
-    int i=0, j, k, idBanco, sistema;
+    int i=0, j, k, idBanco=0, sistema=0;
     struct Produto *todosProdutos=NULL, h;
     va_list intArgumentPointer;
     va_start(intArgumentPointer, idProduto);
@@ -581,15 +581,11 @@ int ConsultaProdutos(int modo, int idProduto, ...) {
         idBanco=va_arg(intArgumentPointer, int);
         sistema=va_arg(intArgumentPointer, int);
     }
-    else {
-        idBanco=0;
-        sistema=0;
-    }
     va_end(intArgumentPointer);
     if (produtos=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
         fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
         while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
-            if (leituraProduto.disponivel && ((!idBanco || leituraProduto.idBanco == idBanco) && (!sistema || leituraProduto.sistAmortizacao == sistema-1) /*&& (!idProduto || leituraProduto.idProduto == idProduto)*/)) {
+            if (leituraProduto.disponivel && ((!idBanco || leituraProduto.idBanco == idBanco) && (!sistema || leituraProduto.sistAmortizacao == sistema-1) && (!idProduto || leituraProduto.idProduto == idProduto))) {
                 todosProdutos=(struct Produto*) realloc(todosProdutos, sizeof(struct Produto)*(i+1)); // realoca espaço no array de produtos a cada produto disponível encontrado
                 todosProdutos[i]=leituraProduto;
                 i++;
