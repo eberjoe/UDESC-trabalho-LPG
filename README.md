@@ -54,10 +54,10 @@ struct Produto {
 
 ### Dados para a Simulação
 A simulação de financiamento requererá os seguintes dados do contraente:
-* Renda -- **```float```**
-* Valor total do bem a ser adquirido -- **```float```**
-* Valor disponível para entrada -- **```float```**
-* Prazo total do financiamento em meses -- **```int```**
+* Renda -- ```float```
+* Valor total do bem a ser adquirido -- ```float```
+* Valor disponível para entrada -- ```float```
+* Prazo total do financiamento em meses -- ```int```
 
 O sistema deverá retornar as opções disponíveis de acordo com a base de dados, ou uma mensagem indicando que não há opções para os valores fornecidos. 
 
@@ -68,15 +68,15 @@ Os nomes das entidades seguirão o seguinte padrão:
 |-|-|-|
 |constantes|upper case|MAX|
 |campos e variáveis|camel case|idProduto|
-|structs e funções -- exceto **```main()```**|pascal case|ByPassModel|
-|bibliotecas e arquivos de apoio -- exceto **```README.md```**|lower case|mathfunctions|
+|structs e funções -- exceto ```main()```|pascal case|ByPassModel|
+|bibliotecas e arquivos de apoio -- exceto ```README.md```|lower case|mathfunctions|
 
 ### Exclusão de Dados
-A remoção de registros de bancos e de produtos se dará através do zeramento do campo **```disponivel```**. Ao efetuar a inserção de um novo registro, o sistema deverá primeiro procurar por um registro com **```disponivel == 0```** e sobrescrever nele o novo registro. Somente será adicionado um novo registro ao fim do arquivo nos casos em que não houver registros com **```disponivel == 0```**. Isto limitará a geração de lixo e o desperdício de recursos.
+A remoção de registros de bancos e de produtos se dará através do zeramento do campo ```disponivel```. Ao efetuar a inserção de um novo registro, o sistema deverá primeiro procurar por um registro com ```disponivel == 0``` e sobrescrever nele o novo registro. Somente será adicionado um novo registro ao fim do arquivo nos casos em que não houver registros com ```disponivel == 0```. Isto limitará a geração de lixo e o desperdício de recursos.
 
-Para que os identificadores sejam unívocos, seus valores virão de um contador do tipo **```int```** gravado no início do arquivo, que é lido e incrementado a cada inserção de registro. Este método impede que um identificador de um registro, mesmo removido, seja reutilizado, além de conferir ao identificador a informação sobre a ordem de inserção.
+Para que os identificadores sejam unívocos, seus valores virão de um contador do tipo ```int``` gravado no início do arquivo, que é lido e incrementado a cada inserção de registro. Este método impede que um identificador de um registro, mesmo removido, seja reutilizado, além de conferir ao identificador a informação sobre a ordem de inserção.
 
-Os registros com o campo **```disponivel```** zerado serão inacessíveis ao usuário seja para consulta ou para edição.
+Os registros com o campo ```disponivel``` zerado serão inacessíveis ao usuário seja para consulta ou para edição.
 
 ### Expectativa
 O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil, auxiliando o usuário na tomada de decisões.
@@ -84,18 +84,23 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 ### Conceitos e Técnicas que Não Foram Estudados na Disciplina
 * Associação de estruturas de dados através de chave externa.
 * Atribuição dentro de cláusulas condicionais.
-* Uso do valor de retorno da função **```fopen()```** no modo **```r```** para verificação da existência do arquivo.
-* Uso do valor de retorno da função **```scanf()```** para a validação da entrada de dados do usuário.
-* Uso de **```while (getchar() != '\n');```** para consumir retorno de linha em excesso da entrada do usuário.
-* Formatação de strings e números com ponto flutuante com a função **```printf()```**.
-* Utilização das bibliotecas **```locale.h```** e **```math.h```**.
-* *Cast* do dividendo de tipo **```int```** para **```float```** no cálculo do quociente tipo **```float```**.
+* Uso do valor de retorno da função ```fopen()``` no modo ```r``` para verificação da existência do arquivo.
+* Uso do valor de retorno da função ```scanf()``` para a validação da entrada de dados do usuário.
+* Uso de ```while (getchar() != '\n');``` para consumir retorno de linha em excesso da entrada do usuário.
+* Formatação de strings e números com ponto flutuante com a função ```printf()```.
+* Utilização das bibliotecas ```locale.h``` e ```math.h```.
+* *Cast* do dividendo de tipo ```int``` para ```float``` no cálculo do quociente tipo ```float```.
 * Uso de operadores de atribuição.
-* Funções variádicas e macros da biblioteca **```stdarg.h```**.
+* Funções variádicas e macros da biblioteca ```stdarg.h```.
 
 ### Ferramentas Utilizadas
 * Visual Studio Code e CodeBlocks para a edição do código.
 * GNU GCC e Microsot Visual C++ para a compilação do código.
+
+### Funções Importantes
+```int Prospecta()```
+Esta função é responsável por, com base nos dados fornecidos pelo prospectivo contraente, fazer a seleção na base de produtos, calculando os valores das parcelas e agrupando no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```, os dados dos financiamentos que se encaixam no perfil.
+A função chamadora (*caller*) da função ```Prospecta``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin);``` após utilizar os seus dados.
 
 ## Proposta de Roteiro de Apresentação
 
