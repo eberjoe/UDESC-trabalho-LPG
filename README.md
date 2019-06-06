@@ -107,5 +107,21 @@ Mostrar um esquema gráfico e explicar os caminhos de menu.
 
 ![Mapa de menus](menumap.png)
 
+#### 2.1. A Função Variádica ```ConsultaProdutos```:
+Assinatura da função:
+
+```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
+
+A função retorna um ```int``` com o número de resultados gerados pela consulta.
+
+Parâmetros:
+
+|Nome|Descrição|Mandatório|
+|-|-|-|
+|```modo```|Define o modo de impressão dos resultados da consulta -- valor negativo: sem impressão; 0: lista simples; 1: impressão detalhada| SIM |
+|```id```|0 para consultar mais de um registro e obrigar a passagem dos dois argumentos seguintes, define o ID de um registro único a ser pesquisado, eliminando a necessidade dos próximos dois argumentos.| SIM |
+|```filtroBanco```|0 para não filtrar a consulta por banco, ou o ID do banco| NÃO |
+|```filtroSistemaAmort```|0 para não filtrar a consulta por sistema de amortização, 1 para filtrar por sistema SAC, ou 2 para filtrar por sistema PRICE| NÃO |
+
 ### 3. Demonstração Prática da Aplicação
-Demonstrar as funcionalidades primeiro sem nenhuma base de dados, e depois utilizando uma base pré-elaborada para a demonstração de simulações de financiamento. Focar nas inovações e na regra de exclusão de registros.
+Demonstrar as funcionalidades primeiro sem nenhuma base de dados, e depois utilizando uma base pré-elaborada para a demonstração de simulações de financiamento. Focar nas inovações e na regra de exclusão/inserção de registros.
