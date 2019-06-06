@@ -98,7 +98,20 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 * GNU GCC e Microsot Visual C++ para a compilação do código.
 
 ### Funções Importantes
-```int Prospecta()```
+####```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
+
+Esta função variádica retorna um ```int``` com o número de resultados gerados pela consulta aos produtos e aceita 2 ou 4 argumentos.
+#####
+Parâmetros:
+
+|Nome|Descrição|Mandatório|
+|-|-|-|
+|```modo```|Define o modo de impressão dos resultados da consulta -- valor negativo: sem impressão; 0: lista simples; 1: impressão detalhada.| SIM |
+|```id```|0 para consultar mais de um registro e obrigar a passagem dos dois argumentos seguintes, define o ID de um registro único a ser pesquisado, eliminando a necessidade dos próximos dois argumentos.| SIM |
+|```filtroBanco```|0 para não filtrar a consulta por banco, ou o ID do banco.| NÃO |
+|```filtroSistemaAmort```|0 para não filtrar a consulta por sistema de amortização, 1 para filtrar por sistema SAC, ou 2 para filtrar por sistema PRICE.| NÃO |
+
+####```int Prospecta(float renda, float valor, float entrada, int prazo)```
 
 Esta função é responsável por fazer a seleção na base de produtos com base nos dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```, os dados dos financiamentos que se encaixam no perfil.
 
