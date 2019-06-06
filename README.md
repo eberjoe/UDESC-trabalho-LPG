@@ -90,7 +90,8 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 * Formatação de strings e números com ponto flutuante com a função **```printf()```**.
 * Utilização das bibliotecas **```locale.h```** e **```math.h```**.
 * *Cast* do dividendo de tipo **```int```** para **```float```** no cálculo do quociente tipo **```float```**.
-* Uso de operadores de atribuição (**```/=```**)
+* Uso de operadores de atribuição.
+* Funções variádicas e macros da biblioteca **```stdarg.h```**.
 
 ### Ferramentas Utilizadas
 * Visual Studio Code e CodeBlocks para a edição do código.
@@ -107,4 +108,4 @@ Mostrar um esquema gráfico e explicar os caminhos de menu.
 ![Mapa de menus](menumap.png)
 
 ### 3. Demonstração Prática da Aplicação
-Demonstrar as funcionalidades primeiro sem nenhuma base de dados, e depois utilizando uma base pré-elaborada para a demonstração de simulações de financiamento. Focar nas técnicas de validação de dados e na regra de exclusão de registros.
+Demonstrar as funcionalidades primeiro sem nenhuma base de dados, e depois utilizando uma base pré-elaborada para a demonstração de simulações de financiamento. Focar nas inovações e na regra de exclusão de registros.
