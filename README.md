@@ -99,8 +99,10 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 
 ### Funções Importantes
 ```int Prospecta()```
-Esta função é responsável por, com base nos dados fornecidos pelo prospectivo contraente, fazer a seleção na base de produtos, calculando os valores das parcelas e agrupando no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```, os dados dos financiamentos que se encaixam no perfil.
-A função chamadora (*caller*) da função ```Prospecta``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin);``` após utilizar os seus dados.
+
+Esta função é responsável por fazer a seleção na base de produtos com base nos dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```, os dados dos financiamentos que se encaixam no perfil.
+
+A função chamadora (*caller*) da função ```Prospecta``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin)``` após utilizar os seus dados.
 
 ## Proposta de Roteiro de Apresentação
 
