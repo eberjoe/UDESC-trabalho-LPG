@@ -29,18 +29,17 @@ struct Financiamento {
     int idProduto;
     int idBanco;
     int sistAmortizacao;
-    float taxaNominalAnual;
-    int prazo;
-    float primeiraParcela;
-    float ultimaParcela;
+    float taxaNominalAnual; // taxa de juros nominal ao ano com capitalização mensal = taxaEfetivaJuros*12
+    int prazo; // prazo para o financiamento estipulado pelo cliente
+    float primeiraParcela; // simulação da primeira parcela
+    float ultimaParcela; // simulação da última parcela
 };
 
-/* GLOBAIS (EXCETO ATORES, JORNALISTAS E APRESENTADORES) */
-FILE *bancos, *produtos;
-int id;
-struct Banco leituraBanco;
-struct Produto leituraProduto;
-struct Financiamento *poolFin;
+/* DADOS GLOBAIS */
+FILE *arquivo; // ponteiro para os arquivos dos registros
+struct Banco leituraBanco; // armazena o registro lido do arquivo de bancos
+struct Produto leituraProduto; // armazena o registro lido do arquivo de produtos
+struct Financiamento *poolFin; // armazena os resultados da prospecção e simulação
 
 /* PROTÓTIPOS DAS FUNÇÕES CRUD */
 int InsereBanco(struct Banco); // retorna êxito da inserção
@@ -59,7 +58,7 @@ char* SistAm(int); //retorna "SAC" para 0 ou "PRICE" para 1
 int main() {
     setlocale(LC_ALL, "Portuguese");
     char invalido[]="\nVou fingir que não vi isso!\n\n";
-    int i, op, s=0, sCb, sCp, filtroIdBanco, filtroSist, prazo, tamPoolFin;
+    int i, id, op, s=0, sCb, sCp, filtroIdBanco, filtroSist, prazo, tamPoolFin;
     float renda, valorBem, entrada;
     struct Banco entradaBanco;
     struct Produto entradaProduto;
@@ -113,6 +112,7 @@ int main() {
                         }
                         else
                             printf("\nAtualmente não dispomos de planos de financiamento que atendam as suas exigências.");
+                        free(poolFin);
                     }
                     else {
                         printf("%s", invalido);
@@ -142,16 +142,16 @@ int main() {
                                         }
                                         printf("\nEntre o novo nome para %s: ", NomeBanco(id));
                                         gets(entradaBanco.nome);
-                                        bancos=fopen("b.bin", "rb+");
-                                        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-                                        while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
+                                        arquivo=fopen("b.bin", "rb+");
+                                        fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+                                        while (fread(&leituraBanco, sizeof(struct Banco), 1, arquivo)) {
                                             if (leituraBanco.idBanco == entradaBanco.idBanco) {
-                                                fseek(bancos, -sizeof(struct Banco), SEEK_CUR);
-                                                fwrite(&entradaBanco, sizeof(struct Banco), 1, bancos);
+                                                fseek(arquivo, -sizeof(struct Banco), SEEK_CUR);
+                                                fwrite(&entradaBanco, sizeof(struct Banco), 1, arquivo);
                                                 break;
                                             }
                                         }
-                                        fclose(bancos);
+                                        fclose(arquivo);
                                         break;
                                     }
                                     printf("%s", invalido);
@@ -293,16 +293,16 @@ int main() {
                                                     printf("%s", invalido);
                                                     break;
                                             }
-                                            produtos=fopen("p.bin", "rb+");
-                                            fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-                                            while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+                                            arquivo=fopen("p.bin", "rb+");
+                                            fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+                                            while (fread(&leituraProduto, sizeof(struct Produto), 1, arquivo)) {
                                                 if (leituraProduto.idProduto == entradaProduto.idProduto) {
-                                                    fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor do arquivo para o início do registro a ser editado
-                                                    fwrite(&entradaProduto, sizeof(struct Produto), 1, produtos);
+                                                    fseek(arquivo, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor do arquivo para o início do registro a ser editado
+                                                    fwrite(&entradaProduto, sizeof(struct Produto), 1, arquivo);
                                                     break;
                                                 }
                                             }
-                                            fclose(bancos);
+                                            fclose(arquivo);
                                             ConsultaProdutos(1, entradaProduto.idProduto);
                                             break;
                                         }
@@ -426,38 +426,38 @@ int main() {
 }
 
 int InsereBanco(struct Banco banco) {
-    int sobrescrita=0, i=0;
-    if (bancos=fopen("b.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
-        fread(&id, sizeof(int), 1, bancos); // lê o contador de ID
+    int sobrescrita=0, i=0, id;
+    if (arquivo=fopen("b.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
+        fread(&id, sizeof(int), 1, arquivo); // lê o contador de ID
         id++;
-        rewind(bancos);
-        fwrite(&id, sizeof(int), 1, bancos); // sobrescreve o contador de ID
+        rewind(arquivo);
+        fwrite(&id, sizeof(int), 1, arquivo); // sobrescreve o contador de ID
     }
     else {
         id=1;
-        bancos=fopen("b.bin", "wb"); // cria um arquivo do zero
-        fwrite(&id, sizeof(int), 1, bancos);
+        arquivo=fopen("b.bin", "wb"); // cria um arquivo do zero
+        fwrite(&id, sizeof(int), 1, arquivo);
     }
-    fclose(bancos);
+    fclose(arquivo);
     banco.disponivel=1;
     banco.idBanco=id;
-    bancos=fopen("b.bin", "rb+");
-    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-    while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) { // percorre o arquivo
+    arquivo=fopen("b.bin", "rb+");
+    fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+    while (fread(&leituraBanco, sizeof(struct Banco), 1, arquivo)) { // percorre o arquivo
         if (!leituraBanco.disponivel) { // confere se há um registro excluído
-            fseek(bancos, -sizeof(struct Banco), SEEK_CUR); // retorna o cursor do arquivo para o início do registro excluído
-            if (fwrite(&banco, sizeof(struct Banco), 1, bancos)) //sobrescreve
+            fseek(arquivo, -sizeof(struct Banco), SEEK_CUR); // retorna o cursor do arquivo para o início do registro excluído
+            if (fwrite(&banco, sizeof(struct Banco), 1, arquivo)) //sobrescreve
                 i++;
             sobrescrita=1;
             break;
         }
     }
-    fclose(bancos);
+    fclose(arquivo);
     if (!sobrescrita) {
-        bancos=fopen("b.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
-        if (fwrite(&banco, sizeof(struct Banco), 1, bancos))
+        arquivo=fopen("b.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
+        if (fwrite(&banco, sizeof(struct Banco), 1, arquivo))
             i++;
-        fclose(bancos);
+        fclose(arquivo);
     }
     return i;
 }
@@ -465,9 +465,9 @@ int InsereBanco(struct Banco banco) {
 int ListaBancos(int modo) {
     int i=0, j, k;
     struct Banco *todosBancos=NULL, h;
-    if (bancos=fopen("b.bin", "rb")) { //confere se já existe um arquivo de bancos
-        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-        while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
+    if (arquivo=fopen("b.bin", "rb")) { //confere se já existe um arquivo de bancos
+        fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+        while (fread(&leituraBanco, sizeof(struct Banco), 1, arquivo)) {
             if (leituraBanco.disponivel) {
                 todosBancos=(struct Banco*) realloc(todosBancos, sizeof(struct Banco)*(i+1)); // realoca espaço no array de bancos a cada banco disponível encontrado
                 todosBancos[i]=leituraBanco;
@@ -491,83 +491,81 @@ int ListaBancos(int modo) {
                     printf("ID:\t%d\nNome:\t%s\n\n", todosBancos[j].idBanco, todosBancos[j].nome);
             }
             else { // impressão na tela modo simples
-                printf("-------------------------------\n");
+                printf("+-----------------------------+\n");
                 printf("| ID\t| Nome do banco       |\n|-----------------------------|\n");
                 for (j=0; j<i; j++)
                     printf("| %d\t| %-20.20s|\n", todosBancos[j].idBanco, todosBancos[j].nome);
-                printf("-------------------------------\n");
+                printf("+-----------------------------+\n");
             }
         }
     }
-    fclose(bancos);
+    fclose(arquivo);
+    free(todosBancos);
     return i;
 }
 
 int RemoveBanco(int idBanco) {
     int i=0, c;
-    bancos=fopen("b.bin", "rb+");
-    fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-    while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
+    arquivo=fopen("b.bin", "rb+");
+    fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+    while (fread(&leituraBanco, sizeof(struct Banco), 1, arquivo)) {
         if (leituraBanco.idBanco == idBanco && leituraBanco.disponivel) {
             leituraBanco.disponivel=0;
-            fseek(bancos, -sizeof(struct Banco), SEEK_CUR); // retorna o cursor do arquivo para o início do registro a ser excluído
-            if (fwrite(&leituraBanco, sizeof(struct Banco), 1, bancos))
+            fseek(arquivo, -sizeof(struct Banco), SEEK_CUR); // retorna o cursor do arquivo para o início do registro a ser excluído
+            if (fwrite(&leituraBanco, sizeof(struct Banco), 1, arquivo))
                 i++;
             break;
         }
     }
-    fclose(bancos);
-    if ((produtos=fopen("p.bin", "rb+")) && i) { // confere se já existe um arquivo de produtos
-        fseek(produtos, 0, SEEK_END);
-        c=ftell(produtos);
-        rewind(produtos);
-        fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-        while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+    fclose(arquivo);
+    if ((arquivo=fopen("p.bin", "rb+")) && i) { // confere se já existe um arquivo de produtos
+        fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+        while (fread(&leituraProduto, sizeof(struct Produto), 1, arquivo)) {
             if (leituraProduto.idBanco == idBanco && leituraProduto.disponivel) {
                 leituraProduto.disponivel=0;
-                fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para o inicio do registro a ser excluído
-                fwrite(&leituraProduto, sizeof(struct Produto), 1, produtos);
-                fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para evitar expansão do arquivo na próxima iteração
+                fseek(arquivo, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para o inicio do registro a ser excluído
+                fwrite(&leituraProduto, sizeof(struct Produto), 1, arquivo);
+                fseek(arquivo, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para evitar expansão do arquivo na próxima iteração
             }
         }
     }
-    fclose(produtos);
+    fclose(arquivo);
     return i;
 }
 
 int InsereProdutoParaBanco(struct Produto produto) {
-    int sobrescrita=0, i=0;
-    if (produtos=fopen("p.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
-        fread(&id, sizeof(int), 1, produtos); // lê o contador de ID
+    int sobrescrita=0, i=0, id;
+    if (arquivo=fopen("p.bin", "rb+")) { // confere se o arquivo já existe para abri-lo sem apagar dados
+        fread(&id, sizeof(int), 1, arquivo); // lê o contador de ID
         id++;
-        rewind(produtos);
-        fwrite(&id, sizeof(int), 1, produtos); // sobrescreve o contador de ID
+        rewind(arquivo);
+        fwrite(&id, sizeof(int), 1, arquivo); // sobrescreve o contador de ID
     }
     else {
         id=1;
-        produtos=fopen("p.bin", "wb"); // cria um arquivo do zero
-        fwrite(&id, sizeof(int), 1, produtos);
+        arquivo=fopen("p.bin", "wb"); // cria um arquivo do zero
+        fwrite(&id, sizeof(int), 1, arquivo);
     }
-    fclose(produtos);
+    fclose(arquivo);
     produto.disponivel=1;
     produto.idProduto=id;
-    produtos=fopen("p.bin", "rb+");
-    fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-    while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) { // percorre o arquivo
+    arquivo=fopen("p.bin", "rb+");
+    fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+    while (fread(&leituraProduto, sizeof(struct Produto), 1, arquivo)) { // percorre o arquivo
         if (!leituraProduto.disponivel) { // confere se há um registro excluído
-            fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor do arquivo para o início do registro excluído
-            if (fwrite(&produto, sizeof(struct Produto), 1, produtos)) //sobrescreve
+            fseek(arquivo, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor do arquivo para o início do registro excluído
+            if (fwrite(&produto, sizeof(struct Produto), 1, arquivo)) //sobrescreve
                 i++;
             sobrescrita=1;
             break;
         }
     }
-    fclose(produtos);
+    fclose(arquivo);
     if (!sobrescrita) {
-        produtos=fopen("p.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
-        if (fwrite(&produto, sizeof(struct Produto), 1, produtos))
+        arquivo=fopen("p.bin", "ab"); // abre arquivo para adicionar novo registro ao final do arquivo
+        if (fwrite(&produto, sizeof(struct Produto), 1, arquivo))
             i++;
-        fclose(produtos);
+        fclose(arquivo);
     }
     return i;
 }
@@ -582,9 +580,9 @@ int ConsultaProdutos(int modo, int idProduto, ...) {
         sistema=va_arg(intArgumentPointer, int);
     }
     va_end(intArgumentPointer);
-    if (produtos=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
-        fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-        while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+    if (arquivo=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
+        fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+        while (fread(&leituraProduto, sizeof(struct Produto), 1, arquivo)) {
             if (leituraProduto.disponivel && ((!idBanco || leituraProduto.idBanco == idBanco) && (!sistema || leituraProduto.sistAmortizacao == sistema-1) && (!idProduto || leituraProduto.idProduto == idProduto))) {
                 todosProdutos=(struct Produto*) realloc(todosProdutos, sizeof(struct Produto)*(i+1)); // realoca espaço no array de produtos a cada produto disponível encontrado
                 todosProdutos[i]=leituraProduto;
@@ -613,74 +611,71 @@ int ConsultaProdutos(int modo, int idProduto, ...) {
                 }
             }
             else if (!modo) { // impressão no modo resumido
-                printf("------------------------------------------------------------------------------------\n");
+                printf("+----------------------------------------------------------------------------------+\n");
                 printf("| ID\t| Nome do produto          | Banco               | Amort.    | Taxa %% a.m. |\n|----------------------------------------------------------------------------------|\n");
                 for (j=0; j<i; j++)
                     printf("| %d\t| %-25.25s| %-20.20s| %-10.10s| %-12.2f|\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao), todosProdutos[j].taxaEfetivaJuros*100);
-                printf("------------------------------------------------------------------------------------\n");
+                printf("+----------------------------------------------------------------------------------+\n");
             }
         }
     }
-    fclose(produtos);
+    fclose(arquivo);
+    free(todosProdutos);
     return i;
 }
 
 int RemoveProduto(int idProduto){
     int i=0;
-    produtos=fopen("p.bin", "rb+");
-    fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
-    while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+    arquivo=fopen("p.bin", "rb+");
+    fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador de ID
+    while (fread(&leituraProduto, sizeof(struct Produto), 1, arquivo)) {
         if (leituraProduto.idProduto == idProduto && leituraProduto.disponivel) {
             leituraProduto.disponivel=0;
-            fseek(produtos, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para o inicio do registro a ser excluído
-            if (fwrite(&leituraProduto, sizeof(struct Produto), 1, produtos))
+            fseek(arquivo, -sizeof(struct Produto), SEEK_CUR); // retorna o cursor para o inicio do registro a ser excluído
+            if (fwrite(&leituraProduto, sizeof(struct Produto), 1, arquivo))
                 i++;
             break;
         }
     }
-    fclose(produtos);
+    fclose(arquivo);
     return i;
 }
 
 char* NomeBanco(int idBanco) {
-    char* c=NULL;
-    if (bancos=fopen("b.bin", "rb")) { // confere se já existe um arquivo de bancos
-        fseek(bancos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
-        while (fread(&leituraBanco, sizeof(struct Banco), 1, bancos)) {
+    if (arquivo=fopen("b.bin", "rb")) { // confere se já existe um arquivo de bancos
+        fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+        while (fread(&leituraBanco, sizeof(struct Banco), 1, arquivo)) {
             if (leituraBanco.idBanco == idBanco) {
-                c=(char*) malloc(MAXNOME*sizeof(char));
-                strcpy(c, leituraBanco.nome);
-                break;
+                fclose(arquivo);
+                return leituraBanco.nome;
             }
         }
     }
-    fclose(bancos);
-    return c;
+    fclose(arquivo);
+    return 0;
 }
 
 char* NomeProduto(int idProduto) {
-    char* c=NULL;
-    if (produtos=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
-        fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
-        while (fread(&leituraProduto, sizeof(struct Produto), 1, produtos)) {
+    if (arquivo=fopen("p.bin", "rb")) { // confere se já existe um arquivo de produtos
+        fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+        while (fread(&leituraProduto, sizeof(struct Produto), 1, arquivo)) {
             if (leituraProduto.idProduto == idProduto) {
-                c=(char*) malloc(MAXNOME*sizeof(char));
-                strcpy(c, leituraProduto.nome);
-                break;
+                fclose(arquivo);
+                return leituraProduto.nome;
             }
         }
     }
-    fclose(produtos);
-    return c;
+    fclose(arquivo);
+    return 0;
 }
 
 int Prospecta(float renda, float valor, float entrada, int prazo) {
     int i=0;
     poolFin=NULL;
     float compRenda, aSac=(valor-entrada)/prazo, rPrice=(valor-entrada)*pow(1+leituraProduto.taxaEfetivaJuros, prazo)*leituraProduto.taxaEfetivaJuros/(pow(1+leituraProduto.taxaEfetivaJuros, prazo)-1);
-    produtos=fopen("p.bin", "rb");
-    fseek(produtos, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
-    while (fread(&leituraProduto, sizeof(struct Produto), 1,  produtos)) {
+    arquivo=fopen("p.bin", "rb");
+    fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
+    while (fread(&leituraProduto, sizeof(struct Produto), 1,  arquivo)) {
         compRenda=leituraProduto.maxPorcentRenda*renda;
         if (leituraProduto.disponivel && leituraProduto.prazoMax >= prazo && leituraProduto.maxPorcentFinanc >= 1-entrada/valor) {
             if (!leituraProduto.sistAmortizacao) {
@@ -709,7 +704,7 @@ int Prospecta(float renda, float valor, float entrada, int prazo) {
             }
         }
     }
-    fclose(produtos);
+    fclose(arquivo);
     return i;
 }
 
