@@ -101,11 +101,11 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 
 ### Funções Importantes
 
-* ```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
+#### 1. ```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
 
 Esta função variádica imprime os dados de uma consulta na tela e pode receber 2 ou 4 argumentos. Ela retorna um ```int``` com o número de resultados gerados pela consulta aos produtos. ```ConsultaProdutos``` não deve ser chamada com 3 argumentos, pois completará o quarto com lixo de memória.
 
-Parâmetros:
+##### Parâmetros:
 
 |Nome|Descrição|Mandatório|
 |-|-|-|
@@ -114,7 +114,7 @@ Parâmetros:
 |```filtroBanco```|Recebe 0 para não filtrar a consulta por banco, ou recebe o ID do banco.| NÃO |
 |```filtroSistemaAmort```|Recebe 0 para não filtrar a consulta por sistema de amortização, 1 para filtrar por sistema SAC, ou 2 para filtrar por sistema PRICE.| NÃO |
 
-*  ```int Prospecta(float renda, float valor, float entrada, int prazo)```
+#### 2. ```int Prospecta(float renda, float valor, float entrada, int prazo)```
 
 Esta função é responsável por fazer a seleção na base de produtos de acordo com os dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando os dados dos financiamentos que se encaixam no perfil do contraente no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```. A função retorna um  ```int``` com o número de financiamentos agrupados.
 
