@@ -89,11 +89,13 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 * Uso de ```while (getchar() != '\n');``` para consumir retorno de linha em excesso da entrada do usuário.
 * Formatação de strings e números com ponto flutuante com a função ```printf()```.
 * Utilização das bibliotecas ```locale.h``` e ```math.h```.
-* *Cast* do dividendo de tipo ```int``` para ```float``` no cálculo do quociente tipo ```float```.
+* Conversão (*cast*) do dividendo de tipo ```int``` para ```float``` no cálculo do quociente tipo ```float```.
 * Uso de operadores de atribuição.
-* Funções variádicas e macros da biblioteca ```stdarg.h```.
+* Uso do operador condicional ou ternário.
+* Funções variádicas e macros relacionadas da biblioteca ```stdarg.h```.
 
 ### Ferramentas Utilizadas
+
 * Visual Studio Code e CodeBlocks para a edição do código.
 * GNU GCC e Microsot Visual C++ para a compilação do código.
 
@@ -101,20 +103,20 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 
 #### ```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
 
-Esta função variádica retorna um ```int``` com o número de resultados gerados pela consulta aos produtos e aceita 2 ou 4 argumentos.
+Esta função variádica pode receber 2 ou 4 argumentos, e retorna um ```int``` com o número de resultados gerados pela consulta aos produtos. Ela não deve ser chamada com 3 argumentos, pois completará o quarto com lixo de memória.
 
 ##### Parâmetros:
 
 |Nome|Descrição|Mandatório|
 |-|-|-|
 |```modo```|Define o modo de impressão dos resultados da consulta -- valor negativo: sem impressão; 0: lista simples; 1: impressão detalhada.| SIM |
-|```id```|0 para consultar mais de um registro e obrigar a passagem dos dois argumentos seguintes, define o ID de um registro único a ser pesquisado, eliminando a necessidade dos próximos dois argumentos.| SIM |
-|```filtroBanco```|0 para não filtrar a consulta por banco, ou o ID do banco.| NÃO |
-|```filtroSistemaAmort```|0 para não filtrar a consulta por sistema de amortização, 1 para filtrar por sistema SAC, ou 2 para filtrar por sistema PRICE.| NÃO |
+|```id```|Recebe 0 para consultar mais de um registro e obrigar a passagem dos dois argumentos seguintes, ou recebe o ID de um registro único a ser pesquisado, eliminando a necessidade dos próximos dois argumentos.| SIM |
+|```filtroBanco```|Recebe 0 para não filtrar a consulta por banco, ou recebe o ID do banco.| NÃO |
+|```filtroSistemaAmort```|Recebe 0 para não filtrar a consulta por sistema de amortização, 1 para filtrar por sistema SAC, ou 2 para filtrar por sistema PRICE.| NÃO |
 
 #### ```int Prospecta(float renda, float valor, float entrada, int prazo)```
 
-Esta função é responsável por fazer a seleção na base de produtos com base nos dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```, os dados dos financiamentos que se encaixam no perfil.
+Esta função é responsável por fazer a seleção na base de produtos com base nos dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando os dados dos financiamentos que se encaixam no perfil no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```. A função retorna um  ```int``` com o número de financiamentos agrupados.
 
 A função chamadora (*caller*) da função ```Prospecta``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin)``` após utilizar os seus dados.
 
