@@ -101,11 +101,11 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 
 ### Funções Importantes
 
-#### ```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
+* ```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
 
-Esta função variádica pode receber 2 ou 4 argumentos, e retorna um ```int``` com o número de resultados gerados pela consulta aos produtos. Ela não deve ser chamada com 3 argumentos, pois completará o quarto com lixo de memória.
+Esta função variádica imprime os dados de uma consulta na tela e pode receber 2 ou 4 argumentos. Ela retorna um ```int``` com o número de resultados gerados pela consulta aos produtos. ```ConsultaProdutos``` não deve ser chamada com 3 argumentos, pois completará o quarto com lixo de memória.
 
-##### Parâmetros:
+Parâmetros:
 
 |Nome|Descrição|Mandatório|
 |-|-|-|
@@ -114,9 +114,9 @@ Esta função variádica pode receber 2 ou 4 argumentos, e retorna um ```int``` 
 |```filtroBanco```|Recebe 0 para não filtrar a consulta por banco, ou recebe o ID do banco.| NÃO |
 |```filtroSistemaAmort```|Recebe 0 para não filtrar a consulta por sistema de amortização, 1 para filtrar por sistema SAC, ou 2 para filtrar por sistema PRICE.| NÃO |
 
-#### ```int Prospecta(float renda, float valor, float entrada, int prazo)```
+*  ```int Prospecta(float renda, float valor, float entrada, int prazo)```
 
-Esta função é responsável por fazer a seleção na base de produtos com base nos dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando os dados dos financiamentos que se encaixam no perfil no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```. A função retorna um  ```int``` com o número de financiamentos agrupados.
+Esta função é responsável por fazer a seleção na base de produtos de acordo com os dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando os dados dos financiamentos que se encaixam no perfil do contraente no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```. A função retorna um  ```int``` com o número de financiamentos agrupados.
 
 A função chamadora (*caller*) da função ```Prospecta``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin)``` após utilizar os seus dados.
 
