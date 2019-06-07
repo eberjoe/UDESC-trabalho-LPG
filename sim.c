@@ -672,34 +672,25 @@ char* NomeProduto(int idProduto) {
 int Prospecta(float renda, float valor, float entrada, int prazo) {
     int i=0;
     poolFin=NULL;
-    float compRenda, aSac=(valor-entrada)/prazo, rPrice=(valor-entrada)*pow(1+leituraProduto.taxaEfetivaJuros, prazo)*leituraProduto.taxaEfetivaJuros/(pow(1+leituraProduto.taxaEfetivaJuros, prazo)-1);
+    float compRenda, aSac, rPrice, emprestimo=valor-entrada, parcela1, parcela2;
     arquivo=fopen("p.bin", "rb");
     fseek(arquivo, sizeof(int), SEEK_SET); // salta o espaço reservado ao contador do ID
     while (fread(&leituraProduto, sizeof(struct Produto), 1,  arquivo)) {
-        compRenda=leituraProduto.maxPorcentRenda*renda;
         if (leituraProduto.disponivel && leituraProduto.prazoMax >= prazo && leituraProduto.maxPorcentFinanc >= 1-entrada/valor) {
-            if (!leituraProduto.sistAmortizacao) {
-                if ((valor-entrada)*leituraProduto.taxaEfetivaJuros+(valor-entrada)/prazo <= compRenda) {
-                    poolFin=(struct Financiamento*) realloc(poolFin, sizeof(struct Financiamento)*(i+1));
-                    poolFin[i].idProduto=leituraProduto.idProduto;
-                    poolFin[i].idBanco=leituraProduto.idBanco;
-                    poolFin[i].sistAmortizacao=leituraProduto.sistAmortizacao;
-                    poolFin[i].prazo=prazo;
-                    poolFin[i].taxaNominalAnual=leituraProduto.taxaEfetivaJuros*12*100;
-                    poolFin[i].primeiraParcela=(valor-entrada)*leituraProduto.taxaEfetivaJuros+aSac;
-                    poolFin[i].ultimaParcela=(valor-entrada)*leituraProduto.taxaEfetivaJuros*(1-((float)prazo-1)/prazo)+aSac;
-                    i++;
-                }
-            }
-            else if (rPrice <= compRenda) {
+            aSac=emprestimo/prazo;
+            rPrice=(valor-entrada)*pow(1+leituraProduto.taxaEfetivaJuros, prazo)*leituraProduto.taxaEfetivaJuros/(pow(1+leituraProduto.taxaEfetivaJuros, prazo)-1);
+            compRenda=leituraProduto.maxPorcentRenda*renda;
+            parcela1 = (leituraProduto.sistAmortizacao) ? rPrice : emprestimo*leituraProduto.taxaEfetivaJuros+aSac;
+            parcela2 = (leituraProduto.sistAmortizacao) ? rPrice : emprestimo*leituraProduto.taxaEfetivaJuros*(1-((float)prazo-1)/prazo)+aSac;
+            if (parcela1 <= compRenda) {
                 poolFin=(struct Financiamento*) realloc(poolFin, sizeof(struct Financiamento)*(i+1));
                 poolFin[i].idProduto=leituraProduto.idProduto;
                 poolFin[i].idBanco=leituraProduto.idBanco;
                 poolFin[i].sistAmortizacao=leituraProduto.sistAmortizacao;
                 poolFin[i].prazo=prazo;
                 poolFin[i].taxaNominalAnual=leituraProduto.taxaEfetivaJuros*12*100;
-                poolFin[i].primeiraParcela=rPrice;
-                poolFin[i].ultimaParcela=rPrice;
+                poolFin[i].primeiraParcela=parcela1;
+                poolFin[i].ultimaParcela=parcela2;
                 i++;
             }
         }
