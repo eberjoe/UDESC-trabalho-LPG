@@ -82,17 +82,54 @@ Os registros com o campo ```disponivel``` zerado serão inacessíveis ao usuári
 O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil, auxiliando o usuário na tomada de decisões.
 
 ### Conceitos e Técnicas que Não Foram Estudados na Disciplina
-* Associação de estruturas de dados através de chave externa.
-* Atribuição dentro de cláusulas condicionais.
-* Uso do valor de retorno da função ```fopen()``` no modo ```r``` para verificação da existência do arquivo.
-* Uso do valor de retorno da função ```scanf()``` para a validação da entrada de dados do usuário.
-* Uso de ```while (getchar() != '\n');``` para consumir retorno de linha em excesso da entrada do usuário.
-* Formatação de strings e números com ponto flutuante com a função ```printf()```.
-* Utilização das bibliotecas ```locale.h``` e ```math.h```.
-* Conversão (*cast*) do dividendo de tipo ```int``` para ```float``` no cálculo do quociente tipo ```float```.
-* Uso de operadores de atribuição.
-* Uso do operador condicional ou ternário.
-* Funções variádicas e macros relacionadas da biblioteca ```stdarg.h```.
+1. Associação de estruturas de dados através de chave externa.
+
+2. Atribuição dentro de cláusulas condicionais:
+
+    ```if (tamPoolFin=Prospecta(renda, valorBem, entrada, prazo))```
+    
+3. Uso do valor de retorno da função ```fopen``` no modo ```r``` para verificação da existência do arquivo:
+
+    ```if (arquivo=fopen("b.bin", "rb")) { //confere se já existe um arquivo de bancos ```
+    
+4. Uso do valor de retorno da função ```scanf``` para a validação da entrada de dados do usuário:
+
+    ```if (scanf("%f", &renda) && renda > 0) // valida renda como float maior que zero```
+    
+5. Alternativa multiplataforma a ```fflush(stdin)``` para consumir retorno de linha em excesso no buffer de entrada:
+
+    ```while (getchar() != '\n');```
+ 
+6. Formatação de strings e números com ponto flutuante na função ```printf```:
+
+    ```printf("| %d\t| %-25.25s| %-20.20s| %-10.10s| %-12.2f|\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao), todosProdutos[j].taxaEfetivaJuros*100);```
+
+7. Utilização das bibliotecas ```locale.h``` e ```math.h```.
+
+8. Conversão (*cast*) do dividendo de tipo ```int``` para ```float``` no cálculo do quociente tipo ```float```.
+
+9. Uso do operador condicional ou ternário:
+
+    ```parcela2 = (leituraProduto.sistAmortizacao) ? rPrice : emprestimo*leituraProduto.taxaEfetivaJuros*(1-((float)prazo-1)/prazo)+aSac;```
+
+10. Uso de operadores de atribuição:
+
+    ```entradaProduto.taxaEfetivaJuros/=100;```
+
+11. Funções variádicas e macros relacionadas da biblioteca ```stdarg.h```:
+
+``` C
+int ConsultaProdutos(int modo, int idProduto, ...) {
+    int i=0, j, k, idBanco=0, sistema=0;
+    struct Produto *todosProdutos=NULL, h;
+    va_list intArgumentPointer;
+    va_start(intArgumentPointer, idProduto);
+    if (!idProduto) {
+        idBanco=va_arg(intArgumentPointer, int);
+        sistema=va_arg(intArgumentPointer, int);
+    }
+    (...)
+```
 
 ### Ferramentas Utilizadas
 
@@ -110,9 +147,9 @@ Esta função variádica imprime os dados de uma consulta na tela e pode receber
 |Nome|Descrição|Mandatório|
 |-|-|-|
 |```modo```|Define o modo de impressão dos resultados da consulta -- valor negativo: sem impressão; 0: lista simples; 1: impressão detalhada.| SIM |
-|```id```|Recebe 0 para consultar mais de um registro e obrigar a passagem dos dois argumentos seguintes, ou recebe o ID de um registro único a ser pesquisado, eliminando a necessidade dos próximos dois argumentos.| SIM |
-|```filtroBanco```|Recebe 0 para não filtrar a consulta por banco, ou recebe o ID do banco.| NÃO |
-|```filtroSistemaAmort```|Recebe 0 para não filtrar a consulta por sistema de amortização, 1 para filtrar por sistema SAC, ou 2 para filtrar por sistema PRICE.| NÃO |
+|```id```|A passagem de 0 consulta mais de um registro e obriga a passagem dos dois argumentos seguintes, a passagem do ID de um produto consulta um registro único, eliminando a necessidade dos próximos dois argumentos.| SIM |
+|```filtroBanco```|ID do banco ou 0 para não filtrar por banco.| NÃO |
+|```filtroSistemaAmort```| 1 para filtrar por sistema SAC, 2 para filtrar por sistema PRICE, ou 0 para não filtrar por sistema de amortização.| NÃO |
 
 #### 2. ```int Prospecta(float renda, float valor, float entrada, int prazo)```
 
