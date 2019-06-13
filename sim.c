@@ -146,7 +146,8 @@ int main() {
                                         }
                                         printf("\nEntre o novo nome para %s: ", NomeBanco(id));
                                         entradaBanco=leituraBanco;
-                                        gets(entradaBanco.nome);
+                                        fgets(entradaBanco.nome, MAXNOME+1, stdin); // fgets adiciona '\n' ao final da string
+                                        strtok(entradaBanco.nome, "\n"); // segmenta a string usando '\n' como delimitador
                                         EditaBanco(entradaBanco);
                                         break;
                                     }
@@ -156,7 +157,8 @@ int main() {
                                 case 2:
                                     printf("\nCADASTRO DE BANCOS > INSERÇÃO\n\n");
                                     printf("Entre o nome do novo banco: ");
-                                    gets(entradaBanco.nome);
+                                    fgets(entradaBanco.nome, MAXNOME+1, stdin); // fgets adiciona '\n' ao final da string
+                                    strtok(entradaBanco.nome, "\n"); // segmenta a string usando '\n' como delimitador
                                     if (InsereBanco(entradaBanco))
                                         printf("\nBanco inserido com sucesso!\n\n");
                                     else
@@ -250,7 +252,8 @@ int main() {
                                                 switch (op) {
                                                     case 1:
                                                         printf("\nEntre o novo nome: ");
-                                                        gets(entradaProduto.nome);
+                                                        fgets(entradaProduto.nome, MAXNOME+1, stdin); // fgets adiciona '\n' ao final da string
+                                                        strtok(entradaProduto.nome, "\n"); // segmenta a string usando '\n' como delimitador
                                                         break;
                                                     case 2:
                                                         printf("\nO sistema foi mudado para %s\n", SistAm(!leituraProduto.sistAmortizacao));
@@ -328,7 +331,8 @@ int main() {
                                         printf("%s\n", NomeBanco(entradaProduto.idBanco));
                                         while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
                                         printf("Entre o nome do produto: ");
-                                        gets(entradaProduto.nome);
+                                        fgets(entradaProduto.nome, MAXNOME+1, stdin); // fgets adiciona '\n' ao final da string
+                                        strtok(entradaProduto.nome, "\n"); // segmenta a string usando '\n' como delimitador
                                         printf("\nEntre o sistema de amortização. [1] para SAC ou [2] para PRICE: ");
                                         if (!scanf("%d", &op) || op != 1 && op != 2) { // validação da opção de produto
                                             while (getchar() != '\n'); // consome o retorno de linha em excesso da entrada do usuário
