@@ -59,7 +59,7 @@ char* SistAm(int); //retorna "SAC" para 0 ou "PRICE" para 1
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
-    char invalido[]="\nVou fingir que não vi isso!\n\n";
+    char invalido[]="\nVou fingir que não vi isso!\n\n", contrato[2][100]={"%d parcelas decrescentes, sendo a primeira de R$ %.2f, e a última de R$ %.2f.\n", "%d parcelas fixas de R$ %.2f.\n"};
     int i, id, op, s=0, sCb, sCp, filtroIdBanco, filtroSist, prazo, tamPoolFin;
     float renda, valorBem, entrada;
     struct Banco entradaBanco;
@@ -108,9 +108,10 @@ int main() {
                         if (tamPoolFin=Prospecta(renda, valorBem, entrada, prazo)) {
                             printf("\nTemos os seguintes planos para o seu caso:\n");
                             for (i=0; i<tamPoolFin; i++) {
-                                printf("\nFinanciamento %s do banco %s, no sistema de amortização %s, em %d vezes e taxa nominal de %.2f %% a.a.\n", NomeProduto(poolFin[i].idProduto), NomeBanco(poolFin[i].idBanco), SistAm(poolFin[i].sistAmortizacao), prazo, poolFin[i].taxaNominalAnual);
-                                printf("Primeira parcela no valor de R$ %.2f, e última parcela no valor de R$ %.2f.\n", poolFin[i].primeiraParcela, poolFin[i].ultimaParcela);
+                                printf("\n%d) Financiamento %s do banco %s, com taxa nominal de %.2f %% a.a.:\n", i+1, NomeProduto(poolFin[i].idProduto), NomeBanco(poolFin[i].idBanco), poolFin[i].taxaNominalAnual);
+                                printf(contrato[poolFin[i].sistAmortizacao], prazo, poolFin[i].primeiraParcela, poolFin[i].ultimaParcela);
                             }
+                            printf("\nOBS.: Os valores acima não incluem seguro e não levam em conta possíveis\noscilações em fatores de correção, como a Taxa Referencial (TR).\n");
                         }
                         else
                             printf("\nAtualmente não dispomos de planos de financiamento que atendam as suas exigências.");
