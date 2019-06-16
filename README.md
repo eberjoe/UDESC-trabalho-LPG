@@ -94,10 +94,6 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 10. Uso de operadores de atribuição.
 11. Funções variádicas e respectivas macros da biblioteca ```stdarg.h```.
 
-### Ferramentas Utilizadas
-* Visual Studio Code e CodeBlocks para a edição do código.
-* GNU GCC e Microsot Visual C++ para a compilação do código.
-
 ### Funções Importantes
 #### 1. ```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
 Esta função variádica imprime os dados de uma consulta na tela e pode receber 2 ou 4 argumentos. Ela retorna um ```int``` com o número de resultados gerados pela consulta. ```ConsultaProdutos()``` não deve ser chamada com 3 argumentos, pois completará o quarto com lixo de memória.
@@ -126,6 +122,12 @@ struct Financiamento {
 ```
 
 A função chamadora (*caller*) da função ```Prospecta()``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin)``` após utilizar os seus dados.
+
+### Ferramentas Utilizadas
+* Visual Studio Code e CodeBlocks para a edição do código.
+* GNU GCC e Microsot Visual C++ para a compilação do código.
+* Controle de versões e compartilhamento com Git e GitHub.
+* Pesquisas na comunidade Stack Overflow e em outras fontes online.
 
 ## Proposta de Roteiro de Apresentação
 ### 1. Objetivo do Projeto
