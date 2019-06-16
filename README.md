@@ -113,6 +113,18 @@ Esta função variádica imprime os dados de uma consulta na tela e pode receber
 #### 2. ```int Prospecta(float renda, float valor, float entrada, int prazo)```
 Esta função é responsável por fazer a seleção na base de produtos de acordo com os dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando os dados dos financiamentos que se encaixam no perfil do contraente no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```. A função retorna um  ```int``` com o número de financiamentos agrupados.
 
+``` C
+struct Financiamento {
+    int idProduto;
+    int idBanco;
+    int sistAmortizacao;
+    float taxaNominalAnual; // taxa de juros nominal ao ano com capitalização mensal = taxaEfetivaJuros*12
+    int prazo; // prazo para o financiamento estipulado pelo cliente
+    float primeiraParcela; // simulação da primeira parcela
+    float ultimaParcela; // simulação da última parcela
+};
+```
+
 A função chamadora (*caller*) da função ```Prospecta()``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin)``` após utilizar os seus dados.
 
 ## Proposta de Roteiro de Apresentação
