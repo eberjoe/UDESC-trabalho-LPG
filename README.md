@@ -8,7 +8,7 @@ Cronograma:
 * [x] Definição da Equipe (duplas): até dia 20/05 (confirme a equipe até este dia usando o e-mail rafaelberri@gmail.com e no assunto informe “LPG – TF Equipe”).
 * [x] Definição do problema a ser tratado: até dia 27/05. Envie um texto descrevendo o problema que o sistema final poderia ajudar. Envie a definição principal dos dados (structs) que será utilizado na solução escolhida. No mínimo, o programa deverá trabalhar com 10 campos. (Envie até este dia usando o e-mail rafaelberri@gmail.com e o assunto “LPG – TF Dados”).
 * [ ] Apresentação do sistema será dia 17/06. Todos os integrantes deverão falar. Deverá ser apresentado o sistema/problema. Duração máxima de cada apresentação serão 12 minutos e 3 minutos para perguntas. A equipe deverá se atentar em mostrar, principalmente, os pontos de avaliação abaixo.
-* [ ] Envio do código fonte (24/06). Enviar para rafaelberri@gmail.com um arquivo compactado contendo o código fonte do programa, a apresentação final, e um texto descritivo do sistema/problema atendido (com no máximo 2 páginas de texto).
+* [ ] Envio do código fonte (17/06). Enviar para rafaelberri@gmail.com um arquivo compactado contendo o código fonte do programa, a apresentação final, e um texto descritivo do sistema/problema atendido (com no máximo 2 páginas de texto).
 
 ## Critérios de Pontuação
 |Descrição|Peso|
@@ -23,13 +23,13 @@ Cronograma:
 |Apresentação e organização|1,0|
 |Presença (durante o mês de junho e principalmente na apresentação final)|1,0|
 
-## Proposta: Cadastro de Bancos com seus Produtos Financeiros para Simulação de Financiamento
+## Cadastro de Bancos com seus Produtos Financeiros para Simulação de Financiamento
 
 ### Introdução
-O sistema permitirá o cadastro, a consulta e a remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá ao usuário efetuar simulações de financiamento, apresentando na tela a progressão da amortização.
+O sistema permite o cadastro, a consulta e a remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá que um usuário efetue a prospecção de financiamentos compatíveis com o perfil que ele definir, apresentando na tela os valores para cada financiamento.
 
 ### Dados para Cadastro
-O cadastro de instituições financeiras requererá as seguintes estruturas de dados:
+O cadastro de instituições financeiras requer as seguintes estruturas de dados:
 ``` C
 #define MAXNOME 100
 
@@ -52,17 +52,17 @@ struct Produto {
 };
 ```
 
-### Dados para a Simulação
-A simulação de financiamento requererá os seguintes dados do contraente:
+### Dados para a Propecção e Simulação
+A prospecção e simulação de financiamentos requerem os seguintes dados do contraente:
 * Renda -- ```float```
 * Valor total do bem a ser adquirido -- ```float```
 * Valor disponível para entrada -- ```float```
 * Prazo total do financiamento em meses -- ```int```
 
-O sistema deverá retornar as opções disponíveis de acordo com a base de dados, ou uma mensagem indicando que não há opções para os valores fornecidos. 
+O sistema retorna as opções disponíveis de acordo com a base de dados, ou uma mensagem indicando que não há opções de financiamento para os valores fornecidos. 
 
 ### Convenção para Nomes
-Os nomes das entidades seguirão o seguinte padrão:
+Os nomes de entidades no código fonte seguem o seguinte padrão:
 
 |Tipo|Formato|Exemplo|
 |-|-|-|
@@ -79,86 +79,43 @@ Para que os identificadores sejam unívocos, seus valores virão de um contador 
 Os registros com o campo ```disponivel``` zerado serão inacessíveis ao usuário seja para consulta ou para edição.
 
 ### Expectativa
-O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil, auxiliando o usuário na tomada de decisões.
+O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil, auxiliando pessoas na tomada de decisões.
 
 ### Conceitos e Técnicas que Não Foram Estudados na Disciplina
 1. Associação de estruturas de dados através de chave externa.
-
-2. Atribuição dentro de cláusulas condicionais:
-
-    ```if (tamPoolFin=Prospecta(renda, valorBem, entrada, prazo))```
-    
-3. Uso do valor de retorno da função ```fopen``` no modo ```r``` para verificação da existência do arquivo:
-
-    ```if (arquivo=fopen("b.bin", "rb")) { //confere se já existe um arquivo de bancos ```
-    
-4. Uso do valor de retorno da função ```scanf``` para a validação da entrada de dados do usuário:
-
-    ```if (scanf("%f", &renda) && renda > 0) // valida renda como float maior que zero```
-    
-5. Alternativa multiplataforma a ```fflush(stdin)``` para consumir retorno de linha em excesso no buffer de entrada:
-
-    ```while (getchar() != '\n');```
- 
-6. Formatação de strings e números com ponto flutuante na função ```printf```:
-
-    ```printf("| %d\t| %-25.25s| %-20.20s| %-10.10s| %-12.2f|\n", todosProdutos[j].idProduto, todosProdutos[j].nome, NomeBanco(todosProdutos[j].idBanco), SistAm(todosProdutos[j].sistAmortizacao), todosProdutos[j].taxaEfetivaJuros*100);```
-
+2. Atribuição dentro de cláusulas condicionais.
+3. Uso do valor de retorno da função ```fopen()``` no modo ```r``` para verificação da existência do arquivo.
+4. Uso do valor de retorno da função ```scanf()``` para a validação da entrada de dados do usuário.
+5. Alternativa multiplataforma a ```fflush(stdin)``` para consumir o retorno de linha em excesso no buffer de entrada.
+6. Formatação de strings e números com ponto flutuante na função ```printf()```.
 7. Utilização das bibliotecas ```locale.h``` e ```math.h```.
-
 8. Conversão (*cast*) do dividendo de tipo ```int``` para ```float``` no cálculo do quociente tipo ```float```.
-
-9. Uso do operador condicional ou ternário:
-
-    ```parcela2 = (leituraProduto.sistAmortizacao) ? rPrice : emprestimo*leituraProduto.taxaEfetivaJuros*(1-((float)prazo-1)/prazo)+aSac;```
-
-10. Uso de operadores de atribuição:
-
-    ```entradaProduto.taxaEfetivaJuros/=100;```
-
-11. Funções variádicas e macros relacionadas da biblioteca ```stdarg.h```:
-
-``` C
-int ConsultaProdutos(int modo, int idProduto, ...) {
-    int i=0, j, k, idBanco=0, sistema=0;
-    struct Produto *todosProdutos=NULL, h;
-    va_list intArgumentPointer;
-    va_start(intArgumentPointer, idProduto);
-    if (!idProduto) {
-        idBanco=va_arg(intArgumentPointer, int);
-        sistema=va_arg(intArgumentPointer, int);
-    }
-    (...)
-```
+9. Uso do operador condicional ou ternário.
+10. Uso de operadores de atribuição.
+11. Funções variádicas e respectivas macros da biblioteca ```stdarg.h```.
 
 ### Ferramentas Utilizadas
-
 * Visual Studio Code e CodeBlocks para a edição do código.
 * GNU GCC e Microsot Visual C++ para a compilação do código.
 
 ### Funções Importantes
-
 #### 1. ```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
-
-Esta função variádica imprime os dados de uma consulta na tela e pode receber 2 ou 4 argumentos. Ela retorna um ```int``` com o número de resultados gerados pela consulta aos produtos. ```ConsultaProdutos``` não deve ser chamada com 3 argumentos, pois completará o quarto com lixo de memória.
+Esta função variádica imprime os dados de uma consulta na tela e pode receber 2 ou 4 argumentos. Ela retorna um ```int``` com o número de resultados gerados pela consulta. ```ConsultaProdutos()``` não deve ser chamada com 3 argumentos, pois completará o quarto com lixo de memória.
 
 ##### Parâmetros:
-
 |Nome|Descrição|Mandatório|
 |-|-|-|
-|```modo```|Define o modo de impressão dos resultados da consulta -- valor negativo: sem impressão; 0: lista simples; 1: impressão detalhada.| SIM |
-|```id```|A passagem de 0 consulta mais de um registro e obriga a passagem dos dois argumentos seguintes, a passagem do ID de um produto consulta um registro único, eliminando a necessidade dos próximos dois argumentos.| SIM |
-|```filtroBanco```|ID do banco ou 0 para não filtrar por banco.| NÃO |
-|```filtroSistemaAmort```| 1 para filtrar por sistema SAC, 2 para filtrar por sistema PRICE, ou 0 para não filtrar por sistema de amortização.| NÃO |
+|```modo```|Define o modo de impressão dos resultados da consulta -- valor negativo: sem impressão; ```0```: lista simples; ```1```: impressão detalhada.| SIM |
+|```id```|Recebe ```0``` para consultar mais de um registro e obrigar a passagem dos dois argumentos seguintes, ou o ID de um produto para consultar um registro único, eliminando a necessidade dos próximos dois argumentos.| SIM |
+|```filtroBanco```|ID do banco ou ```0``` para não filtrar por banco.| NÃO |
+|```filtroSistemaAmort```|Recebe ```1``` para filtrar por sistema SAC, ```2``` para filtrar por sistema PRICE, ou ```0``` para não filtrar por sistema de amortização.| NÃO |
 
 #### 2. ```int Prospecta(float renda, float valor, float entrada, int prazo)```
-
 Esta função é responsável por fazer a seleção na base de produtos de acordo com os dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando os dados dos financiamentos que se encaixam no perfil do contraente no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```. A função retorna um  ```int``` com o número de financiamentos agrupados.
 
-A função chamadora (*caller*) da função ```Prospecta``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin)``` após utilizar os seus dados.
+A função chamadora (*caller*) da função ```Prospecta()``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin)``` após utilizar os seus dados.
 
 ## Proposta de Roteiro de Apresentação
-
 ### 1. Objetivo do Projeto
 Discorrer sobre a expectativa do projeto como descrita acima.
 
