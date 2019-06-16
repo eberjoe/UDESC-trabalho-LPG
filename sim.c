@@ -18,7 +18,7 @@ struct Produto {
     int disponivel; // flag indicando se o produto está disponível ou não
     int idBanco; // identificador da instituição financeira à qual o produto pertence (chave externa)
     char nome[MAXNOME]; // nome do produto
-    int sistAmortizacao; // indica o sistema de amortização que pode ser SAC (0) ou PRICE (!=0)
+    int sistAmortizacao; // indica o sistema de amortização que pode ser SAC (0) ou PRICE (1)
     float maxPorcentFinanc; // número entre 0 e 1 indicando a máxima porção financiável do preço total
     float taxaEfetivaJuros; // número entre 0 e 1 indicando a taxa efetiva de juros
     int prazoMax; // número inteiro indicando a máxima quantidade de meses permitida para o financiamento
@@ -59,7 +59,7 @@ char* SistAm(int); //retorna "SAC" para 0 ou "PRICE" para 1
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
-    char invalido[]="\nVou fingir que não vi isso!\n\n", contrato[2][100]={"%d parcelas decrescentes, sendo a primeira de R$ %.2f, e a última de R$ %.2f.\n", "%d parcelas fixas de R$ %.2f.\n"};
+    char invalido[]="\nVou fingir que não vi isso!\n\n", contrato[2][MAXNOME]={"%d parcelas decrescentes, sendo a primeira de R$ %.2f, e a última de R$ %.2f.\n", "%d parcelas fixas de R$ %.2f.\n"};
     int i, id, op, s=0, sCb, sCp, filtroIdBanco, filtroSist, prazo, tamPoolFin;
     float renda, valorBem, entrada;
     struct Banco entradaBanco;
