@@ -105,10 +105,10 @@ Esta função variádica imprime os dados de uma consulta na tela e pode receber
 ##### Parâmetros:
 |Nome|Descrição|Mandatório|
 |-|-|-|
-|```modo```|Define o modo de impressão dos resultados da consulta -- valor negativo: sem impressão; 0: lista simples; 1: impressão detalhada.| SIM |
-|```id```|A passagem de 0 consulta mais de um registro e obriga a passagem dos dois argumentos seguintes, a passagem do ID de um produto consulta um registro único, eliminando a necessidade dos próximos dois argumentos.| SIM |
-|```filtroBanco```|ID do banco ou 0 para não filtrar por banco.| NÃO |
-|```filtroSistemaAmort```| 1 para filtrar por sistema SAC, 2 para filtrar por sistema PRICE, ou 0 para não filtrar por sistema de amortização.| NÃO |
+|```modo```|Define o modo de impressão dos resultados da consulta -- valor negativo: sem impressão; ```0```: lista simples; ```1```: impressão detalhada.| SIM |
+|```id```|Recebe ```0``` para consultar mais de um registro e obrigar a passagem dos dois argumentos seguintes, ou o ID de um produto para consultar um registro único, eliminando a necessidade dos próximos dois argumentos.| SIM |
+|```filtroBanco```|ID do banco ou ```0``` para não filtrar por banco.| NÃO |
+|```filtroSistemaAmort```|Recebe ```1``` para filtrar por sistema SAC, ```2``` para filtrar por sistema PRICE, ou ```0``` para não filtrar por sistema de amortização.| NÃO |
 
 #### 2. ```int Prospecta(float renda, float valor, float entrada, int prazo)```
 Esta função é responsável por fazer a seleção na base de produtos de acordo com os dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando os dados dos financiamentos que se encaixam no perfil do contraente no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```. A função retorna um  ```int``` com o número de financiamentos agrupados.
