@@ -84,10 +84,10 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 ### Conceitos e Técnicas que Não Foram Estudados na Disciplina
 1. Associação de estruturas de dados através de chave externa.
 2. Atribuição dentro de cláusulas condicionais.
-3. Uso do valor de retorno da função ```fopen``` no modo ```r``` para verificação da existência do arquivo.
-4. Uso do valor de retorno da função ```scanf``` para a validação da entrada de dados do usuário.
+3. Uso do valor de retorno da função ```fopen()``` no modo ```r``` para verificação da existência do arquivo.
+4. Uso do valor de retorno da função ```scanf()``` para a validação da entrada de dados do usuário.
 5. Alternativa multiplataforma a ```fflush(stdin)``` para consumir o retorno de linha em excesso no buffer de entrada.
-6. Formatação de strings e números com ponto flutuante na função ```printf```:
+6. Formatação de strings e números com ponto flutuante na função ```printf()```.
 7. Utilização das bibliotecas ```locale.h``` e ```math.h```.
 8. Conversão (*cast*) do dividendo de tipo ```int``` para ```float``` no cálculo do quociente tipo ```float```.
 9. Uso do operador condicional ou ternário.
@@ -97,11 +97,10 @@ O sistema não se limitará à curadoria de dados, mas também será capaz de co
 ### Ferramentas Utilizadas
 * Visual Studio Code e CodeBlocks para a edição do código.
 * GNU GCC e Microsot Visual C++ para a compilação do código.
-* Compartilhamento e colaboração via GitHub
 
 ### Funções Importantes
 #### 1. ```int ConsultaProdutos(int modo, int id, int filtroBanco, int filtroSistemaAmort)```
-Esta função variádica imprime os dados de uma consulta na tela e pode receber 2 ou 4 argumentos. Ela retorna um ```int``` com o número de resultados gerados pela consulta aos produtos. ```ConsultaProdutos``` não deve ser chamada com 3 argumentos, pois completará o quarto com lixo de memória.
+Esta função variádica imprime os dados de uma consulta na tela e pode receber 2 ou 4 argumentos. Ela retorna um ```int``` com o número de resultados gerados pela consulta aos produtos. ```ConsultaProdutos()``` não deve ser chamada com 3 argumentos, pois completará o quarto com lixo de memória.
 
 ##### Parâmetros:
 |Nome|Descrição|Mandatório|
@@ -114,7 +113,7 @@ Esta função variádica imprime os dados de uma consulta na tela e pode receber
 #### 2. ```int Prospecta(float renda, float valor, float entrada, int prazo)```
 Esta função é responsável por fazer a seleção na base de produtos de acordo com os dados fornecidos pelo prospectivo contraente, calculando os valores das parcelas e agrupando os dados dos financiamentos que se encaixam no perfil do contraente no endereço do ponteiro global do tipo ```struct Financiamento```, chamado ```poolFin```. A função retorna um  ```int``` com o número de financiamentos agrupados.
 
-A função chamadora (*caller*) da função ```Prospecta``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin)``` após utilizar os seus dados.
+A função chamadora (*caller*) da função ```Prospecta()``` (*callee*) fica responsável por liberar o espaço de memómia alocado pela última para o ponteiro global ```poolFin```, executando ```free(poolFin)``` após utilizar os seus dados.
 
 ## Proposta de Roteiro de Apresentação
 ### 1. Objetivo do Projeto
