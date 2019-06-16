@@ -26,7 +26,7 @@ Cronograma:
 ## Cadastro de Bancos com seus Produtos Financeiros para Simulação de Financiamento
 
 ### Introdução
-O sistema permite o cadastro, a consulta e a remoção de dados de instituições financeiras com suas respectivas condições para financiamento. De posse de tais dados, o sistema permitirá que um usuário efetue a prospecção de financiamentos compatíveis com o perfil que ele definir, apresentando na tela os valores para cada financiamento.
+O sistema permite o cadastro, a consulta e a remoção de dados de instituições financeiras com seus respectivos planos de restituição de empréstimo. De posse de tais dados, o sistema permitirá que um usuário efetue a prospecção de financiamentos compatíveis com o perfil que ele definir, apresentando na tela os valores para cada financiamento.
 
 ### Dados para Cadastro
 O cadastro de instituições financeiras requer as seguintes estruturas de dados:
@@ -72,11 +72,11 @@ Os nomes de entidades no código fonte seguem o seguinte padrão:
 |bibliotecas e arquivos de apoio -- exceto ```README.md```|lower case|mathfunctions|
 
 ### Exclusão de Dados
-A remoção de registros de bancos e de produtos se dará através do zeramento do campo ```disponivel```. Ao efetuar a inserção de um novo registro, o sistema deverá primeiro procurar por um registro com ```disponivel == 0``` e sobrescrever nele o novo registro. Somente será adicionado um novo registro ao fim do arquivo nos casos em que não houver registros com ```disponivel == 0```. Isto limitará a geração de lixo e o desperdício de recursos.
+A remoção de registros de bancos e de produtos se dá por zerar o campo ```disponivel```. Ao efetuar a inserção de um novo registro, o sistema primeiro procura por um registro com ```disponivel == 0``` e sobrescrever nele o novo registro. Um novo registro é adicionado ao fim do arquivo somente nos casos em que não há registros com ```disponivel == 0```. Isto limita a geração de lixo e o desperdício de recursos.
 
-Para que os identificadores sejam unívocos, seus valores virão de um contador do tipo ```int``` gravado no início do arquivo, que é lido e incrementado a cada inserção de registro. Este método impede que um identificador de um registro, mesmo removido, seja reutilizado, além de conferir ao identificador a informação sobre a ordem de inserção.
+Para que os identificadores sejam unívocos, seus valores vêm de um contador do tipo ```int``` gravado no início do arquivo, que é lido e incrementado a cada inserção de registro. Este método impede que um identificador de um registro, mesmo removido, seja reutilizado, além de conferir ao identificador a informação sobre a ordem de inserção.
 
-Os registros com o campo ```disponivel``` zerado serão inacessíveis ao usuário seja para consulta ou para edição.
+Os registros com o campo ```disponivel``` zerado são inacessíveis ao usuário seja para consulta ou para edição.
 
 ### Expectativa
 O sistema não se limitará à curadoria de dados, mas também será capaz de converter os dados armazenados em informação útil, auxiliando pessoas na tomada de decisões.
